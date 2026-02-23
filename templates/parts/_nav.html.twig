@@ -1,33 +1,45 @@
 
+<header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Sortir, tout simplement</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">Accueil</a>
+                    </li>
+                    {% if is_granted(('ROLE_ADMIN')) %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Villes [Admin]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Sites [Admin]</a>
+                        </li>
+                    {% endif %}
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Sortir, tout simplement</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Mon profil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Connexion / Déconnexion (xxx est connecté)</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Villes [Admin]</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Sites [Admin]</a>
-                </li>
+                    {% if is_granted(('IS_AUTHENTICATED')) %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Mon profil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
+                        </li>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+                    {% endif %}
 
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
-    <p>Date du jour : {{ 'now'|date('d/m/Y') }}</p>
-</nav>
+        {% if is_granted(('IS_AUTHENTICATED')) %}
+        <p>Connecté en tant que : {{ app.user.userIdentifier }}</p>
+        {% endif %}
+        <p>Date du jour : {{ 'now'|date('d/m/Y') }}</p>
+    </nav>
+
+</header>
 
 
