@@ -2,18 +2,28 @@
 
 {% block body %}
     <h2>Filtrer les sorties</h2>
-<div class="row justify-content-center">
-    <div class="col-12 col-md-6">
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
+    {{ form_start(form) }}
+        <div class="form-container">
 
-        <button type="submit" class="btn btn-primary">
-            Rechercher
-        </button>
+            <div>
+                {{ form_row(form.inputSearch) }}
+                {{ form_row(form.dateMin) }}
+                {{ form_row(form.dateMax) }}
+            </div>
+            <div>
+                {{ form_row(form.isOrganisateur) }}
+                {{ form_row(form.isInscrit) }}
+                {{ form_row(form.isNotInscrit) }}
+                {{ form_row(form.ended) }}
+            </div>
 
-        {{ form_end(form) }}
-    </div>
-</div>
+            <button type="submit" class="btn btn-primary">
+                Rechercher
+            </button>
+
+
+        </div>
+    {{ form_end(form) }}
     <section class="sorties-list">
         {% for sortie in sorties %}
             <p>{{ sortie.nom }} -
@@ -24,7 +34,7 @@
                 {{ sortie.etat.libelle }} -
                 Organisé par {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }} -
 
-            {% if sortie.id in inscriptions and sortie.organisateur.username != app.user.userIdentifier %}
+            {% if sortie.id in inscriptions %}
                 Inscrit -
                 <button class="btn btn-secondary">Se désister</button>
                 {% else %}
