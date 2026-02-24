@@ -3,21 +3,23 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\RegistrationFormType;
 use App\Form\UserType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-
+#[Route('/profil', name: 'app_user')]
 final class UserController extends AbstractController
 {
-    #[Route('/mon-profil', name: 'app_user')]
+    #[Route('/', name: '_mon_profil')]
     public function monProfil(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        $userForm = $this->createForm(UserType::class, $user);
+        $userForm = $this->createForm(RegistrationFormType::class, $user);
         $userForm->handleRequest($request);
 
         if ($userForm->isSubmitted() && $userForm->isValid()) {
@@ -35,8 +37,23 @@ final class UserController extends AbstractController
 
 
         };
-        return $this->render('user/profil.html.twig', [
+        return $this->render('user/mon-profil.html.twig', [
             'user_form' => $userForm,
         ]);
     }
+
+    #[Route('/detail/{username}', name: '_detail',requirements:['slug' => '[a-z0-9\-]+'])]
+    public function detailProfil(UserRepository $userRepo, EntityManagerInterface $em, $username): Response
+    {
+        $user = $userRepo->findOneBy(['username' => $username]);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Cet utilisateur n\'existe pas');
+        }
+
+        return $this->render('user/detail-profil.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
 }

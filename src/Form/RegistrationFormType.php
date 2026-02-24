@@ -28,13 +28,22 @@ class RegistrationFormType extends AbstractType
             ->add('username', TextType::class,[
                 'label' => 'Pseudo'
             ])
-            ->add('prenom')
-            ->add('nom')
-            ->add('telephone')
-            ->add('mail')
+            ->add('prenom', TextType::class,[
+                'label' => 'Prénom'
+            ])
+            ->add('nom', TextType::class,[
+                'label' => 'Nom'
+            ])
+            ->add('telephone', TextType::class,[
+                'label' => 'Téléphone'
+            ])
+            ->add('mail', TextType::class,[
+                'label' => 'Email'
+            ])
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
+                'label' => 'Mot de passe',
                 'type' => PasswordType::class,
                 'options' => [
                     'attr' => ['autocomplete' => 'new-password'],
@@ -58,18 +67,19 @@ class RegistrationFormType extends AbstractType
                     'label' => 'Votre mot de passe',
                 ],
                 'second_options' => [
-                    'label' => 'confirmez votre mot de passe',
+                    'label' => 'Confirmez votre mot de passe',
                 ],
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
 
             ])
             ->add('site', EntityType::class, [
+                'label' => 'Ville de rattachement',
                 'class' => Site::class,
                 'choice_label' => 'nom',
             ])
             ->add('lienImgFile', FileType::class, [
                 'mapped' => false, // car le champs 'lienImgFile n'est pas dans Wish c'est lienImg
-                'label' => 'image',
+                'label' => 'Ma photo',
                 'required' => false,
                 'constraints' => [
                     new File([
@@ -85,39 +95,17 @@ class RegistrationFormType extends AbstractType
                 ]
             ])
 
-            ->add('agreeTerms', CheckboxType::class, [
+            /*->add('afreeterms', CheckboxType::class, [
+                'label' => 'Accepter les conditions d\'utilisations',
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue(
                         message: 'You should agree to our terms.',
                     ),
                 ],
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary mx-auto d-block',
-                ]
-            ])
-        ;
-          /*  ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
-                'constraints' => [
-                    new NotBlank(
-                        message: 'Please enter a password',
-                    ),
-                    new Length(
-                        min: 6,
-                        minMessage: 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
-                        max: 4096,
-                    ),
-                ],
             ])*/
         ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
