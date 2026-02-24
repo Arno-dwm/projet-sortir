@@ -1,45 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h2>Page d'accueil</h2>
-    <form>
-        <fieldset>
-            <legend>Filtrer les sorties</legend>
-            <label for="site">Site</label>
-            <select name="input-site" id="site">
-                <option value="">--Choisir un site--</option>
-                <option value="stherblain">St Herblain</option>
-                <option value="brest">Brest</option>
-            </select>
-            <label for="search">Le nom de la sortie contient</label>
-            <input type="search" id="search" name="input-search" placeholder="Rechercher"/>
+    <h2>Filtrer les sorties</h2>
+    <div>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
 
-            <label for="">
-                Entre
-                <input
-                    type="date"
-                    name="date-debut"
-                />
-                et
-                <input
-                    type="date"
-                    name="date-fin"
-                />
-            </label>
-            <div class="form-checboxes">
-                <label for="cb-orga">Sorties dont je suis l'organisateur.ice</label>
-                <input type="checkbox" id="cb-orga" name="organisateur">
-                <label for="cb-inscrit">Sorties auxquelles je suis inscrit.e</label>
-                <input type="checkbox" id="cb-inscrit" name="inscrit">
-                <label for="cb-notInscrit">Sorties auxquelles je ne suis pas inscrit.e</label>
-                <input type="checkbox" id="cb-notInscrit" name="nonInscrit">
-                <label for="cb-ended">Sorties passées</label>
-                <input type="checkbox" id="cb-ended" name="ended">
-            </div>
-            <button class="btn btn-primary">Rechercher</button>
-        </fieldset>
-    </form>
+        <button type="submit" class="btn btn-primary">
+            Rechercher
+        </button>
 
+        {{ form_end(form) }}
+    </div>
+
+    <section class="sorties-list">
+        {% for sortie in sorties %}
+            <p>{{ sortie.nom }}</p>
+        {% else %}
+            <p>Pas de sortie correspondant au(x) critère(s) choisi(s)</p>
+        {% endfor %}
+    </section>
 
 
 
