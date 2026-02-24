@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,7 +42,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/detail/{username}', name: '_detail',requirements:['slug' => '[a-z0-9\-]+'])]
-    public function detailProfil(UserRepository $userRepo, EntityManagerInterface $em, $username): Response
+    public function detailProfil(UserRepository $userRepo, EntityManagerInterface $em, string $username): Response
     {
         $user = $userRepo->findOneBy(['username' => $username]);
 

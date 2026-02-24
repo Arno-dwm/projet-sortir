@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - Détail Sortie{% endblock %}
+{% block body %}
+
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+
+
+                    <h2 class="text-center ">Détail de la Sortie</h2>
+                    {# ------------ Affichage de l'état la Sortie -------------- #}
+                    {% if sortie.etat.libelle == 'Créée' %}
+                        {% set classBadge = "bg-warning text-black" %}
+                    {% elseif sortie.etat.libelle == 'Ouverte' %}
+                        {% set classBadge = "bg-success" %}
+                    {% elseif sortie.etat.libelle == 'Annulée' %}
+                        {% set classBadge = "bg-danger" %}
+                    {% elseif sortie.etat.libelle == 'Passée' or sortie.etat.libelle == 'Clôturée' %}
+                        {% set classBadge = "bg-dark" %}
+
+                    {% endif %}
+                    <div class="d-flex justify-content-center">
+                    <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
+                    </div>
+                    <div class="row justify-content-center ">
+                        <div class="row align-items-start mt-2">
+                            <div class="col-6 col-lg-3 fw-bold">
+                                <p>Nom de la sortie :</p>
+                                <p>Date et heure de la sortie :</p>
+                                <p>Date limite d'inscription :</p>
+                                <p>Nombre de places :</p>
+                                <p>Durée :</p>
+                                <p>Description et infos :</p>
+
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <p>{{ sortie.nom |capitalize }} </p>
+                                <p>{{ sortie.dateHeureDebut |date('d/m/Y') }} </p>
+                                <p>{{ sortie.dateLimiteInscription |date('d/m/Y') }} </p>
+                                <p>{{ sortie.nbInscriptionsMax |capitalize }} </p>
+                                <p>{{ sortie.duree |capitalize }} </p>
+                                <p>{{ sortie.infosSortie |capitalize }} </p>
+
+                            </div>
+                            <div class="col-6 col-lg-3 fw-bold">
+                                <p>Ville organisatrice :</p>
+                                <p>Lieu :</p>
+                                <p>Rue :</p>
+                                <p>Code postal : </p>
+                                <p>Latitude : </p>
+                                <p>Longitude : </p>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <p>{{ sortie.organisateur.site.nom |capitalize }} </p>
+                                <p>{{ sortie.lieu.nom |capitalize }} </p>
+                                <p>{{ sortie.lieu.rue |capitalize }} </p>
+                                <p>{{ sortie.lieu.ville.getCodePostal }} </p>
+                                <p>{{ sortie.lieu.latitude |capitalize }} </p>
+                                <p>{{ sortie.lieu.longitude |capitalize }} </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# ------------ Affichage des isncriptions -------------- #}
+                    <div class="mt-2">
+                        <h3 class="text-center"> Liste des participants inscrits</h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped border">
+
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Pseudo</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for inscrit in sortie.inscriptions %}
+                                    <tr>
+                                        <td>{{ inscrit.participant.username }}</td>
+                                        <td>{{ inscrit.participant.nom|upper }}</td>
+                                        <td>{{ inscrit.participant.prenom }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">
+                                            Aucun participant inscrit pour le moment.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {# ------------ Administration -------------- #}
+                    {% if sortie.etat.libelle == 'Créée' or sortie.etat.libelle == 'Ouverte' %}
+                        {% if app.user == sortie.organisateur or is_granted('ROLE_ADMIN') %}
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
+                                   class="btn btn-outline-danger mt-2">Modifier</a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
