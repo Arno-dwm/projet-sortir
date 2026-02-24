@@ -2,7 +2,8 @@
 
 {% block body %}
     <h2>Filtrer les sorties</h2>
-    <div>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-6">
         {{ form_start(form) }}
         {{ form_widget(form) }}
 
@@ -12,14 +13,35 @@
 
         {{ form_end(form) }}
     </div>
-
+</div>
     <section class="sorties-list">
         {% for sortie in sorties %}
-            <p>{{ sortie.nom }}</p>
+            <p>{{ sortie.nom }} -
+                {{ sortie.dateHeureDebut | date('d/m/Y H:i') }} -
+                {{ sortie.dateLimiteInscription | date('d/m/Y H:i')}} -
+                {{ sortie.inscriptions | length }} /
+                {{ sortie.nbInscriptionsMax }} inscrits -
+                {{ sortie.etat.libelle }} -
+                Organisé par {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }} -
+
+            {% if sortie.id in inscriptions and sortie.organisateur.username != app.user.userIdentifier %}
+                Inscrit -
+                <button class="btn btn-secondary">Se désister</button>
+                {% else %}
+{#                <a href="{{ path('app_sortie_inscription', {id : sortie.id}) }}" class="btn btn-secondary">S'inscrire</a>#}
+                    <a href="" class="btn btn-secondary">S'inscrire</a>
+            {% endif %}
+            {% if sortie.organisateur.username == app.user.username %}
+{#                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-secondary">Modifier</a>#}
+                <a href="" class="btn btn-secondary">Modifier</a>
+            {% else %}
+                <a href="">Afficher</a>
+            {% endif %}
         {% else %}
             <p>Pas de sortie correspondant au(x) critère(s) choisi(s)</p>
         {% endfor %}
     </section>
+    <button class="btn btn-primary">Créer sortie</button>
 
 
 

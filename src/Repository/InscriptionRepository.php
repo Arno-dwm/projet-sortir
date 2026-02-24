@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Inscription;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,6 +17,15 @@ class InscriptionRepository extends ServiceEntityRepository
         parent::__construct($registry, Inscription::class);
     }
 
+    public function findSortieIdsByUser(User $user): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select('IDENTITY(i.sortie) as sortieId')
+            ->andWhere('i.participant = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getScalarResult();
+    }
     //    /**
     //     * @return Inscription[] Returns an array of Inscription objects
     //     */
