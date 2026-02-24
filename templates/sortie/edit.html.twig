@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - {{ sortie is defined ? 'Editer la sortie' ~ sortie.id: 'Création sortie'}}{% endblock %}
+{% block body %}
+
+<div class="container-fluid mt-5 d-flex justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
+
+    {% if serie is defined and serie.id is not null %}
+
+        <h2 class="text-center">Modifier la Sortie</h2>
+
+    {% else %}
+        <h2 class="text-center">Créer une nouvelle Sortie</h2>
+
+    {% endif %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+            {{ form_start(sortieForm) }}
+
+            <div class="row">
+                {% for field in sortieForm %}
+                    {% if field.vars.name == 'description' %}
+                        <div class="col-12 mb-3">
+                            {{ form_row(field) }}
+                        </div>
+                    {% else %}
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(field) }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3">
+                Enregistrer
+            </button>
+
+            {{ form_end(sortieForm) }}
+
+
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

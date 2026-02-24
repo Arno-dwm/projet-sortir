@@ -10,11 +10,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_MAIL', fields: ['mail'])]
-#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['username'], message: 'Ce pseudo est déjà utilisé')]
+#[UniqueEntity(fields: ['mail'], message: 'Ce mail est déjà utilisé')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -35,15 +38,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\PasswordStrength(
+        // TODO changer la difficulté du mot de passe
+        minScore: PasswordStrength::STRENGTH_WEAK,
+        message: 'Merci de saisir un mot de passe plus sécurié'
+    )]
     private ?string $password = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 3, max: 30,
+        minMessage: 'le nom doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'le nom ne doit pas dépasser {{ limit }} caractères')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 3, max: 30,
+        minMessage: 'le prénom doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'le prénom ne doit pas dépasser {{ limit }} caractères')]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 15, nullable: true)]
+    #[Assert\NotBlank()]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 20)]
@@ -55,6 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Site $site = null;
 
     /**
@@ -68,6 +86,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participant')]
     private Collection $inscriptions;
+
+    #[ORM\PrePersist]
+    public function setActifParDefaut(): void
+    {
+        $this->actif = true;
+    }
 
     public function __construct()
     {
