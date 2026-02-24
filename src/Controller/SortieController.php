@@ -40,14 +40,14 @@ final class SortieController extends AbstractController
 
             $sortie->setOrganisateur($user);
 
-            $etatLibelle = match ($action) {
-                'CRE' => 'En Création',
-                'OUV' => 'Inscriptions ouvertes',
-                'ANN' => 'Annulée',
+            $etatCode = match ($action) {
+                'CRE' => 'CRE',
+                'OUV' => 'OUV',
+                'ANN' => 'ANN',
 
             };
 
-            $etat = $em->getRepository(Etat::class)->findOneBy(['libelle' => $etatLibelle]);
+            $etat = $em->getRepository(Etat::class)->findOneBy(['code' => $etatCode]);
             $sortie->setEtat($etat);
 
             $em->persist($sortie);

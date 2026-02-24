@@ -54,6 +54,10 @@ class SortieRepository extends ServiceEntityRepository
             $qb->andWhere('s.dateHeureDebut <= :dateMax')
                 ->setParameter('dateMax', $filters->dateMax);
         }
+        if($filters->ended) {
+            $qb->andWhere('s.dateLimiteInscription > :dateJour')
+                ->setParameter('dateJour', $filters->ended);
+        }
 
         return $qb->getQuery()->getResult();
     }
