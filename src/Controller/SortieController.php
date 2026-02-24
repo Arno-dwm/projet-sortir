@@ -43,7 +43,7 @@ final class SortieController extends AbstractController
     #[Route('/modifier/{id}', name: '_modifier', requirements:['id' => '\d+'])]
     public function modifier(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
     {
-
+        //todo
         $sortieForm = $this->createForm(SortieType::class, $sortie);
         $sortieForm->handleRequest($request);
 
@@ -65,12 +65,9 @@ final class SortieController extends AbstractController
     #[Route('/detail/{id}', name: '_detail', requirements:['id' => '\d+'])]
     public function detail(Sortie $sortie): Response
     {
-
-
         return $this->render('sortie/detail-sortie.html.twig', [
             'sortie' => $sortie,
         ]);
-
     }
 
     #[Route('/inscription/{id}', name: '_inscription', requirements:['id' => '\d+'])]
