@@ -24,6 +24,9 @@ class Etat
     #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'etat')]
     private Collection $sorties;
 
+    #[ORM\Column(length: 10)]
+    private ?string $code = null;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -72,6 +75,18 @@ class Etat
                 $sorty->setEtat(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
 
         return $this;
     }
