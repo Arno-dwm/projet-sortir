@@ -28,13 +28,22 @@ class RegistrationFormType extends AbstractType
             ->add('username', TextType::class,[
                 'label' => 'Pseudo'
             ])
-            ->add('prenom')
-            ->add('nom')
-            ->add('telephone')
-            ->add('mail')
+            ->add('prenom', TextType::class,[
+                'label' => 'Prénom'
+            ])
+            ->add('nom', TextType::class,[
+                'label' => 'Nom'
+            ])
+            ->add('telephone', TextType::class,[
+                'label' => 'Téléphone'
+            ])
+            ->add('mail', TextType::class,[
+                'label' => 'Email'
+            ])
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
+                'label' => 'Mot de passe',
                 'type' => PasswordType::class,
                 'options' => [
                     'attr' => ['autocomplete' => 'new-password'],
@@ -63,13 +72,14 @@ class RegistrationFormType extends AbstractType
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
 
             ])
-            ->add('site', EntityType::class, [
+            ->add('Ville de rattachement', EntityType::class, [
+                'label' => 'Site',
                 'class' => Site::class,
                 'choice_label' => 'nom',
             ])
             ->add('lienImgFile', FileType::class, [
                 'mapped' => false, // car le champs 'lienImgFile n'est pas dans Wish c'est lienImg
-                'label' => 'image',
+                'label' => 'Imagede profil',
                 'required' => false,
                 'constraints' => [
                     new File([
@@ -85,7 +95,7 @@ class RegistrationFormType extends AbstractType
                 ]
             ])
 
-            ->add('agreeTerms', CheckboxType::class, [
+            ->add('Accepter les conditions d\'utilisations', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue(
