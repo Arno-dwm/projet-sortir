@@ -11,25 +11,22 @@
 
                     <h2 class="text-center ">Détail de la Sortie</h2>
                     {# ------------ Affichage de l'état la Sortie -------------- #}
-                    {% if sortie.etat.libelle == 'Créée' %}
-                        {% set classBadge = "bg-warning text-black"%}
-                        {% set text = 'En cours de création' %}
-                    {% elseif sortie.etat.libelle == 'Ouverte' %}
-                        {% set classBadge = "bg-success"  %}
-                        {% set text = 'Inscriptions ouvertes' %}
-                    {% elseif sortie.etat.libelle == 'Clôturée' %}
-                        {% set classBadge = "bg-info"  %}
-                        {% set text = 'Inscriptions clôturées' %}
-                    {% elseif sortie.etat.libelle == 'Annulée' %}
-                        {% set classBadge = "bg-danger"  %}
-                        {% set text = 'Sortie annulée' %}
-                    {% elseif sortie.etat.libelle == 'Passée' %}
-                        {% set classBadge = "bg-dark"  %}
-                        {% set text = 'Sortie terminées' %}
+                    {% if sortie.etat.code == 'CRE' %}
+                        {% set classBadge = "bg-warning text-black" %}
+                    {% elseif sortie.etat.code == 'OUV' %}
+                        {% set classBadge = "bg-success" %}
+                    {% elseif sortie.etat.code == 'CLO' %}
+                        {% set classBadge = "bg-info" %}
+                    {% elseif sortie.etat.code == 'EC' %}
+                        {% set classBadge = "bg-info" %}
+                    {% elseif sortie.etat.code == 'ANN' %}
+                        {% set classBadge = "bg-danger" %}
+                    {% elseif sortie.etat.code == 'FIN' %}
+                        {% set classBadge = "bg-dark" %}
 
                     {% endif %}
                     <div class="d-flex justify-content-center">
-                    <span class="badge {{ classBadge }} ">{{ text }}</span>
+                        <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
                     </div>
                     <div class="row justify-content-center ">
                         <div class="row align-items-start mt-2">
@@ -112,14 +109,24 @@
                     {% endif %}
 
                     {# ------------ Inscirption -------------- #}
-                    {% if sortie.etat.libelle == 'Ouverte' %}
-
+                    {% for inscrit in sortie.inscriptions|filter( i => i.participant.userIdentifier == app.user.userIdentifier) %}
+                        {% if sortie.etat.code == 'OUV' or 'CLO' %}
                             <div class="d-flex justify-content-center">
-                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
-                                   class="btn btn-success mt-2">S'inscrire</a> {#// TODO mise à jour du lien vers inscriptionà une sortie  #}
-                            </div>
+                                <a href="{{ path('app_sortie_desinscription', {id: sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}"
+                                   class="btn btn-outline-danger mt-2"
+                                   onclick="return confirm('Voulez vous confirmer la supression ?')">Se désister </a>
 
-                    {% endif %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        {% if sortie.etat.code == 'OUV' %}
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ path('app_sortie_inscription', {id: sortie.id}) }}"
+                                   class="btn btn-success mt-2">S'inscrire</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
                 </div>
             </div>
         </div>
