@@ -116,7 +116,7 @@
                         </div>
                     </div>
                     {# ------------ Administration -------------- #}
-                    {% if sortie.etat.libelle == 'Créée' %}
+                    {% if sortie.etat.code == 'CRE' %}
                         {% if app.user == sortie.organisateur or is_granted('ROLE_ADMIN') %}
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
@@ -127,7 +127,7 @@
 
                     {# ------------ Inscirption -------------- #}
                     {% for inscrit in sortie.inscriptions|filter( i => i.participant.userIdentifier == app.user.userIdentifier) %}
-                        {% if sortie.etat.code == 'OUV' or 'CLO' %}
+                        {% if sortie.etat.code == 'OUV' and 'CLO' %}
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('app_sortie_desinscription', {id: sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}"
                                    class="btn btn-outline-danger mt-2"
