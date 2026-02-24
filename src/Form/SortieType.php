@@ -2,53 +2,116 @@
 
 namespace App\Form;
 
-use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\User;
-
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 class SortieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('nom',TextType::class,
-            [
-                'label' => 'Nom',
+        $user = $options['user'];
 
+        $builder
+            ->add('nom', TextType::class, [
+                'label' => 'Nom de la sortie',
             ])
-            ->add('dateHeureDebut')
-            ->add('dateLimiteInscription')
-            ->add('nbInscriptionsMax')
-            ->add('duree')
-            ->add('infosSortie')
-            ->add('urlPhoto')
-            ->add('etat', EntityType::class, [
-                'class' => Etat::class,
-                'choice_label' => 'id',
+
+            ->add('site', TextType::class, [
+                'label' => 'Ville organisatrice',
+                'data' => $user ? $user->getSite()->getNom() : '',
+                'mapped' => false,
+                'disabled' => true,
             ])
+
+            ->add('dateHeureDebut', DateTimeType::class, [
+                'label' => 'Date et heure de la sortie',
+                'widget' => 'single_text',
+            ])
+
+            ->add('ville', ChoiceType::class, [
+                'label' => 'Ville',
+                'choices' => array_combine(
+                    ['Quimper','Nantes','Niort','Rennes'],
+                    ['Quimper','Nantes','Niort','Rennes']
+                ),
+                'mapped' => false,
+            ])
+            ->add('dateLimiteInscription', DateType::class, [
+                'label' => 'Date limite d\'inscription',
+                'widget' => 'single_text',
+            ])
+
             ->add('lieu', EntityType::class, [
                 'class' => Lieu::class,
-                'choice_label' => 'id',
-            ])
-            ->add('organisateur', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
+                'placeholder' => 'Choisissez un lieu',
+
             ])
 
-        ;
+            ->add('nbInscriptionsMax', IntegerType::class, [
+                'label' => 'Nombre de places',
+                'attr'=> [
+                    'min' => 1,
+                ]
+            ])
+
+            ->add('rue', TextType::class, [
+                'label' => 'Rue',
+                'mapped' => false,
+                'attr' => [
+                    'readonly' => true,
+
+                ],
+                'required' => false,
+            ])
+            ->add('duree', IntegerType::class, [
+                'label' => 'Durée en minutes',
+                'attr' => [
+                    'min' => 0,
+                    'step' => 5,
+                ]
+            ])
+
+            ->add('codePostal', TextType::class, [
+                'label' => 'Code postal',
+                'mapped' => false,
+                'attr' => [
+                    'readonly' => true,
+
+                ],
+                'required' => false,
+            ])
+
+
+
+
+
+
+
+            ->add('infosSortie', TextareaType::class, [
+                'label' => 'Description et infos',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Sortie::class,
+            'user' => null,
         ]);
+
+        $resolver->setAllowedTypes('user', ['null', User::class]);
     }
 }

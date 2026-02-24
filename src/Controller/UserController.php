@@ -19,6 +19,7 @@ final class UserController extends AbstractController
     public function monProfil(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
+
         $userForm = $this->createForm(RegistrationFormType::class, $user);
         $userForm->handleRequest($request);
 
