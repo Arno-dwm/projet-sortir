@@ -1,50 +1,88 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} - {{ sortie is defined ? 'Editer la sortie' ~ sortie.id: 'Création sortie'}}{% endblock %}
+{% block title %}
+    {{ parent() }} - {{ sortie is defined and sortie.id is not null ? 'Editer la sortie ' ~ sortie.id : 'Création sortie' }}
+{% endblock %}
+
 {% block body %}
 
-<div class="container-fluid mt-5 d-flex justify-content-center">
-    <div class="col-12 col-md-10 col-lg-8">
-        <div class="card shadow-lg border-0 rounded-4">
-            <div class="card-body p-5">
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
 
-    {% if serie is defined and serie.id is not null %}
-
-        <h2 class="text-center">Modifier la Sortie</h2>
-
-    {% else %}
-        <h2 class="text-center">Créer une nouvelle Sortie</h2>
-
-    {% endif %}
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-6">
-            {{ form_start(sortieForm) }}
-
-            <div class="row">
-                {% for field in sortieForm %}
-                    {% if field.vars.name == 'description' %}
-                        <div class="col-12 mb-3">
-                            {{ form_row(field) }}
-                        </div>
+                    {% if sortie is defined and sortie.id is not null %}
+                        <h2 class="text-center mb-4">Modifier la Sortie</h2>
                     {% else %}
-                        <div class="col-md-6 mb-3">
-                            {{ form_row(field) }}
-                        </div>
+                        <h2 class="text-center mb-4">Créer une nouvelle Sortie</h2>
                     {% endif %}
-                {% endfor %}
+
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-8">
+
+                            {{ form_start(sortieForm) }}
+
+                            <div class="row">
+                                {% for field in sortieForm %}
+                                    {% if field.vars.name == 'infosSortie' %}
+                                        <div class="col-12 mb-3">
+                                            {{ form_row(field) }}
+                                        </div>
+                                    {% else %}
+                                        <div class="col-md-6 mb-3">
+                                            {{ form_row(field) }}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="d-flex gap-2 mt-4">
+                                <button type="submit" name="action" value="CRE" class="btn btn-secondary flex-fill">
+                                    Enregistrer
+                                </button>
+
+                                <button type="submit" name="action" value="OUV" class="btn btn-primary flex-fill">
+                                    Publier la sortie
+                                </button>
+
+                                <button type="submit" name="action" value="ANN" class="btn btn-danger flex-fill">
+                                    Annuler
+                                </button>
+                            </div>
+
+                            {{ form_end(sortieForm, { render_rest: false }) }}
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
-
-            <button class="btn btn-primary w-100 mt-3">
-                Enregistrer
-            </button>
-
-            {{ form_end(sortieForm) }}
-
-
         </div>
     </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const lieux = {{ lieux|json_encode|raw }};
+            const select = document.getElementById('sortie_lieu');
+            const rueField = document.getElementById('sortie_rue');
+            const cpField = document.getElementById('sortie_codePostal');
+
+            if (select) {
+                select.addEventListener('change', function (e) {
+
+                    const id = this.value;
+                    console.log(lieux)
+                    if (lieux[id]) {
+                        if (rueField) rueField.value = lieux[id].rue ?? '';
+                        if (cpField) cpField.value = lieux[id].codePostal ?? '';
+                    } else {
+                        if (rueField) rueField.value = '';
+                        if (cpField) cpField.value = '';
+                    }
+                });
+            }
+
+        });
+    </script>
+
 {% endblock %}

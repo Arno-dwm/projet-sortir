@@ -11,18 +11,22 @@
 
                     <h2 class="text-center ">Détail de la Sortie</h2>
                     {# ------------ Affichage de l'état la Sortie -------------- #}
-                    {% if sortie.etat.libelle == 'Créée' %}
+                    {% if sortie.etat.code == 'CRE' %}
                         {% set classBadge = "bg-warning text-black" %}
-                    {% elseif sortie.etat.libelle == 'Ouverte' %}
+                    {% elseif sortie.etat.code == 'OUV' %}
                         {% set classBadge = "bg-success" %}
-                    {% elseif sortie.etat.libelle == 'Annulée' %}
+                    {% elseif sortie.etat.code == 'CLO' %}
+                        {% set classBadge = "bg-info" %}
+                    {% elseif sortie.etat.code == 'EC' %}
+                        {% set classBadge = "bg-info" %}
+                    {% elseif sortie.etat.code == 'ANN' %}
                         {% set classBadge = "bg-danger" %}
-                    {% elseif sortie.etat.libelle == 'Passée' or sortie.etat.libelle == 'Clôturée' %}
+                    {% elseif sortie.etat.code == 'FIN' %}
                         {% set classBadge = "bg-dark" %}
 
                     {% endif %}
                     <div class="d-flex justify-content-center">
-                    <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
+                        <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
                     </div>
                     <div class="row justify-content-center ">
                         <div class="row align-items-start mt-2">
@@ -78,11 +82,19 @@
                                 </thead>
                                 <tbody>
                                 {% for inscrit in sortie.inscriptions %}
+                                    {% if inscrit.participant.username == app.user.userIdentifier %}
+                                    <tr class="table-success">
+                                        <td><strong>{{ inscrit.participant.username }}</strong></td>
+                                        <td><strong>{{ inscrit.participant.nom|upper }}</strong></td>
+                                        <td><strong>{{ inscrit.participant.prenom }}</strong></td>
+                                    </tr>
+                                    {% else %}
                                     <tr>
                                         <td>{{ inscrit.participant.username }}</td>
                                         <td>{{ inscrit.participant.nom|upper }}</td>
                                         <td>{{ inscrit.participant.prenom }}</td>
                                     </tr>
+                                        {% endif %}
                                 {% else %}
                                     <tr>
                                         <td colspan="3" class="text-center text-muted">
@@ -95,7 +107,7 @@
                         </div>
                     </div>
                     {# ------------ Administration -------------- #}
-                    {% if sortie.etat.libelle == 'Créée' or sortie.etat.libelle == 'Ouverte' %}
+                    {% if sortie.etat.libelle == 'Créée' %}
                         {% if app.user == sortie.organisateur or is_granted('ROLE_ADMIN') %}
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
@@ -103,6 +115,25 @@
                             </div>
                         {% endif %}
                     {% endif %}
+
+                    {# ------------ Inscirption -------------- #}
+                    {% for inscrit in sortie.inscriptions|filter( i => i.participant.userIdentifier == app.user.userIdentifier) %}
+                        {% if sortie.etat.code == 'OUV' or 'CLO' %}
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ path('app_sortie_desinscription', {id: sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}"
+                                   class="btn btn-outline-danger mt-2"
+                                   onclick="return confirm('Voulez vous confirmer la supression ?')">Se désister </a>
+
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        {% if sortie.etat.code == 'OUV' %}
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ path('app_sortie_inscription', {id: sortie.id}) }}"
+                                   class="btn btn-success mt-2">S'inscrire</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
 
                 </div>
             </div>
