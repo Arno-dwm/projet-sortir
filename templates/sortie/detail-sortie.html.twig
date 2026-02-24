@@ -82,11 +82,19 @@
                                 </thead>
                                 <tbody>
                                 {% for inscrit in sortie.inscriptions %}
+                                    {% if inscrit.participant.username == app.user.userIdentifier %}
+                                    <tr class="table-success">
+                                        <td><strong>{{ inscrit.participant.username }}</strong></td>
+                                        <td><strong>{{ inscrit.participant.nom|upper }}</strong></td>
+                                        <td><strong>{{ inscrit.participant.prenom }}</strong></td>
+                                    </tr>
+                                    {% else %}
                                     <tr>
                                         <td>{{ inscrit.participant.username }}</td>
                                         <td>{{ inscrit.participant.nom|upper }}</td>
                                         <td>{{ inscrit.participant.prenom }}</td>
                                     </tr>
+                                        {% endif %}
                                 {% else %}
                                     <tr>
                                         <td colspan="3" class="text-center text-muted">

@@ -71,8 +71,10 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/inscription/{id}', name: '_inscription', requirements:['id' => '\d+'])]
-    public function inscrption(Sortie $sortie, EntityManagerInterface $em): Response
+    public function inscription(Sortie $sortie, EntityManagerInterface $em): Response
     {
+        // todo verifié etat et date du jour
+
         $inscription = new Inscription();
         $inscription->setSortie($sortie);
         $inscription->setDateInscription(new \DateTime('now'));
@@ -89,6 +91,8 @@ final class SortieController extends AbstractController
     #[Route('/desinscription/{id}', name: '_desinscription', requirements:['id' => '\d+'])]
     public function desinscrire(Sortie $sortie, EntityManagerInterface $em, InscriptionRepository $insRepo, Request $request): Response
     {
+        // todo verifié etat et date du jour
+
         $inscription = $insRepo->findOneBy(['sortie' => $sortie, 'participant' => $this->getUser()]);
         $token = $request->query->get('_token');
 
