@@ -116,12 +116,14 @@
                             </table>
                         </div>
                     </div>
+                    {# ------------ Partie pour les boutons -------------- #}
+                    <div>
                     {# ------------ Administration -------------- #}
                     {% if sortie.etat.code == 'CRE' %}
                         {% if app.user == sortie.organisateur or is_granted('ROLE_ADMIN') %}
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
-                                   class="btn btn-outline-danger mt-2">Modifier</a>
+                                   class="btn btn-outline-danger mt-2" target="_self">Modifier</a>
                             </div>
                         {% endif %}
                     {% endif %}
@@ -144,7 +146,11 @@
                             </div>
                         {% endif %}
                     {% endfor %}
-
+                    <div class="d-flex justify-content-center">
+                        <a href="{{ path('app_home')}}"
+                           class="btn btn-light mt-2">Retour</a>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
