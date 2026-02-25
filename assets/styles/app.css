@@ -7,8 +7,39 @@ body {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    background-color: whitesmoke;
+    border-radius:6px;
+
+    width:70vw;
+    margin-left:10px;
 }
 
 .form-container div{
     margin:10px;
+
+}
+
+.sorties-list{
+    display:flex;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+.card {
+    margin-left:10px;
+}
+.card li {
+    list-style-type: none;
+    text-align: justify;
+}
+
+li>span{
+    opacity:0.5;
+
+}
+.card-text{
+    font-size: small;
+}
+.card-text > span{
+    font-size: smaller;
+    color:darkgreen;
 }
