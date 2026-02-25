@@ -154,6 +154,7 @@ final class SortieController extends AbstractController
     public function inscrption(Sortie $sortie, EntityManagerInterface $em): Response
     {
 
+
         if ($sortie->getEtat()->getCode() == 'OUV' && $sortie->getDateLimiteInscription() > new \DateTime('now')) {
             $inscription = new Inscription();
             $inscription->setSortie($sortie);
@@ -162,6 +163,14 @@ final class SortieController extends AbstractController
             $em->persist($inscription);
             $em->flush();
             $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été enregistrée");
+
+            if ($sortie->getInscriptions()->count() >= $sortie->getNbInscriptionsMax()){
+                $etat = $em->getRepository(Etat::class)->findOneBy(['code' => 'CLO']);
+                $sortie->setEtat($etat);
+                $em->persist($sortie);
+                $em->flush();
+            };
+
             return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
         }
 
@@ -179,7 +188,16 @@ final class SortieController extends AbstractController
             $em->remove($inscription);
             $em->flush();
             $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été supprimé");
+
+            if ($sortie->getInscriptions()->count() < $sortie->getNbInscriptionsMax()){
+                $etat = $em->getRepository(Etat::class)->findOneBy(['code' => 'OUV']);
+                $sortie->setEtat($etat);
+                $em->persist($sortie);
+                $em->flush();
+            };
+
             return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+
         }
         $this->addFlash('danger', 'Cette action est impossible !');
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
