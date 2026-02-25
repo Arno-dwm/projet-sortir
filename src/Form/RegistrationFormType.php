@@ -67,7 +67,7 @@ class RegistrationFormType extends AbstractType
                     'label' => 'Votre mot de passe',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmez votre mot de passe',
+                    'label' => 'Confirmez mot de passe',
                 ],
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
 
