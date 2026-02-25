@@ -4,7 +4,9 @@
     <h2>Filtrer les sorties</h2>
     {{ form_start(form) }}
         <div class="form-container">
-
+            <div>
+                {{ form_row(form.site) }}
+            </div>
             <div>
                 {{ form_row(form.inputSearch) }}
             </div>
@@ -22,6 +24,9 @@
                 <button type="submit" class="btn btn-primary">
                     Rechercher
                 </button>
+                <a href="{{ path('app_home') }}" class="btn btn-secondary">
+                    Réinitialiser les filtres
+                </a>
             </div>
 
 
@@ -71,13 +76,13 @@
         </div>
             {% endif %}
         {% else %}
-            <p>Pas de sortie correspondant au(x) critère(s) choisi(s)</p>
+            <p class="alert alert-danger notFound">Pas de sortie correspondant au(x) critère(s) choisi(s)</p>
         {% endfor %}
 
 
     </section>
     {% if is_granted(('IS_AUTHENTICATED')) %}
-        <a href="{{ path('app_sortie_create') }}" class="btn btn-primary">Créer sortie</a>
+        <a href="{{ path('app_sortie_create') }}" target="_self" class="btn btn-primary">Créer sortie</a>
     {% endif %}
 
 

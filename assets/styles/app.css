@@ -2,6 +2,7 @@ body {
     background-color: cadetblue;
 }
 
+/* Homepage */
 .form-container{
     display:flex;
     flex-direction: row;
@@ -18,7 +19,7 @@ body {
     margin:10px;
 
 }
-
+/* Cards sorties*/
 .sorties-list{
     display:flex;
     margin-top:10px;
@@ -49,4 +50,9 @@ li>span{
 .card-text > span{
     font-size: smaller;
     color:darkgreen;
+}
+
+/* Popup aucune sortie homepage*/
+.notFound{
+    margin-left:10px;
 }

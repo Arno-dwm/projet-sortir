@@ -26,6 +26,12 @@ class SortieRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('s');
 
+        if (!empty($filters->site)) {
+            $qb->join('s.organisateur', 'o')
+                ->andWhere('o.site = :site')
+                ->setParameter('site', $filters->site);
+        }
+
         if ($filters->inputSearch) {
             $qb->andWhere('s.nom LIKE :search')
                 ->setParameter('search', '%'.$filters->inputSearch.'%');
@@ -44,6 +50,11 @@ class SortieRepository extends ServiceEntityRepository
                 ->andWhere('i2.id IS NULL')
                 ->setParameter('user', $user);
         }
+        if($filters->ended){
+            $qb->andWhere('s.etat = :etat')
+                ->setParameter('etat', 5);
+        }
+
         // Filtre dates
         if ($filters->dateMin) {
             $qb->andWhere('s.dateHeureDebut >= :dateMin')
@@ -54,10 +65,8 @@ class SortieRepository extends ServiceEntityRepository
             $qb->andWhere('s.dateHeureDebut <= :dateMax')
                 ->setParameter('dateMax', $filters->dateMax);
         }
-        if($filters->ended) {
-            $qb->andWhere('s.dateLimiteInscription > :dateJour')
-                ->setParameter('dateJour', $filters->ended);
-        }
+
+
 
         return $qb->getQuery()->getResult();
     }
