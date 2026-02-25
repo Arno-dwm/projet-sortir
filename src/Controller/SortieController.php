@@ -88,10 +88,10 @@ final class SortieController extends AbstractController
         ]);
     }
 
-   
+
     #[Route('/modifier/{id}', name: '_modifier', requirements: ['id' => '\d+'])]
     public function modifier(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
-    {        //todo
+    {
         $user = $this->getUser();
         $sortieForm = $this->createForm(SortieType::class, $sortie, [
         'user' => $user
