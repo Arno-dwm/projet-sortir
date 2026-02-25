@@ -37,22 +37,22 @@ class Sortie
     #[ORM\Column(length: 250, nullable: true)]
     private ?string $urlPhoto = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(inversedBy: 'sorties', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Etat $etat = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(inversedBy: 'sorties', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sortiesOrganisees')]
+    #[ORM\ManyToOne(inversedBy: 'sortiesOrganisees', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $organisateur = null;
 
     /**
      * @var Collection<int, Inscription>
      */
-    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'sortie')]
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'sortie', fetch: 'EAGER')]
     private Collection $inscriptions;
 
     public function __construct()
