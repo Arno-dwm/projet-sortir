@@ -151,7 +151,7 @@
 
                             {% if sortie.etat.code == 'OUV' %}
                                 <div class="d-flex justify-content-center">
-                                    <a href="{{ path('app_sortie_inscription', {id: sortie.id}) }}"
+                                    <a href="{{ path('app_sortie_inscription', {id: sortie.id, _token: csrf_token('inscription_create' ~ sortie.id)}) }}"
                                        class="btn btn-success mt-2">S'inscrire</a>
                                 </div>
                             {% endif %}
