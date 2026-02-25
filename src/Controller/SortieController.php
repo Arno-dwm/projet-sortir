@@ -51,6 +51,16 @@ final class SortieController extends AbstractController
             $sortie->setEtat($etat);
 
             $em->persist($sortie);
+
+            // Ajout de l'organisateur comme inscrit.
+            $inscription = new Inscription();
+            $inscription->setSortie($sortie);
+            $inscription->setParticipant($user);
+            $inscription->setDateInscription(new \DateTime('now'));
+
+            $em->persist($inscription);
+
+
             $em->flush();
 
             $this->addFlash('success', 'Une nouvelle proposition de sortie a été enregistrée !');
@@ -67,6 +77,8 @@ final class SortieController extends AbstractController
             $lieuxArray[$lieu->getId()] = [
                 'rue' => $lieu->getRue(),
                 'codePostal' => $lieu->getVille()?->getCodePostal(),
+                'latitude' => $lieu->getLatitude(),
+                'longitude' => $lieu->getLongitude(),
             ];
         }
 
