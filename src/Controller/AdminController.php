@@ -83,7 +83,7 @@ final class AdminController extends AbstractController
             $em->persist($user);
             $em->flush($user);
 
-            $this->addFlash('success', ' L\'utilisateur' . $user->getUsername() . ' est actif');
+            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est actif');
             return $this->redirectToRoute('app_admin');
         }
 
@@ -94,7 +94,7 @@ final class AdminController extends AbstractController
     public function rendreInactif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
         $user = $uRepo->find($id);
-
+        //todo vérifier si Paul a une activité à venir
         if (!$user) {
             throw $this->createNotFoundException('Utilisateur non reconnu');
         }
@@ -105,7 +105,7 @@ final class AdminController extends AbstractController
             $em->persist($user);
             $em->flush($user);
 
-            $this->addFlash('success', ' L\'utilisateur' . $user->getUsername() . ' est inactif');
+            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est inactif');
             return $this->redirectToRoute('app_admin');
         }
 

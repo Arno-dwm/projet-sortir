@@ -45,7 +45,7 @@
                                         <td><input id="actif" type="checkbox" checked>
                                             <label for="actif">Actif</label>
                                             <a href="{{ path('app_inactif', {id: user.id, _token: csrf_token('inactif' ~ user.id)}) }}"
-                                               class="btn btn-outline-success btn-sm ms-1">Mettre à jour</a></td>
+                                               class="btn btn-outline-success btn-sm ms-lg-4">Mettre à jour</a></td>
                                     {% else %}
                                         <td><input id="inactif" type="checkbox">
                                             <label for="inactif">Inactif</label>
