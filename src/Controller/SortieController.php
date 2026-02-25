@@ -85,16 +85,17 @@ final class SortieController extends AbstractController
         return $this->render('sortie/edit.html.twig', [
             'sortieForm' => $sortieForm->createView(),
             'lieux' => $lieuxArray,
+            'sortie' => $sortie,
         ]);
     }
 
-   
+
     #[Route('/modifier/{id}', name: '_modifier', requirements: ['id' => '\d+'])]
     public function modifier(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
     {        //todo
         $user = $this->getUser();
         $sortieForm = $this->createForm(SortieType::class, $sortie, [
-        'user' => $user
+            'user' => $user
         ]);
 
         $sortieForm->handleRequest($request);
@@ -103,7 +104,7 @@ final class SortieController extends AbstractController
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             $sortie->setOrganisateur($user);
 
-            if($action) {
+            if ($action) {
 
                 $etatCode = match ($action) {
                     'CRE' => 'CRE',
@@ -184,4 +185,39 @@ final class SortieController extends AbstractController
         $this->addFlash('danger', 'Cette action est impossible !');
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
     }
+
+    #[Route('/delete/{id}', name: '_suppression', requirements: ['id' => '\d+'])]
+    public function delete(Request $request, Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('delete' . $sortie->getId(), $token)) {
+            $this->addFlash('danger', 'Cette action est impossible !');
+            return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        // Récupérer les inscriptions
+        $inscriptions = $sortie->getInscriptions(); // assuming Sortie has OneToMany $inscriptions
+
+        // Vérifier si d'autres participants sont inscrits
+        $otherInscriptions = $inscriptions->filter(function ($inscription) {
+            return $inscription->getParticipant() !== $this->getUser();
+        });
+
+        if ($otherInscriptions->count() > 0) {
+            $this->addFlash('danger', "Impossible de supprimer la sortie : d'autres participants sont inscrits !");
+            return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        // Supprimer la sortie (et automatiquement ton inscription)
+        foreach ($inscriptions as $inscription) {
+            $em->remove($inscription);
+        }
+        $em->remove($sortie);
+        $em->flush();
+
+        $this->addFlash('success', "La sortie {$sortie->getNom()} a été supprimée !");
+        return $this->redirectToRoute('app_home');
+    }
+
 }

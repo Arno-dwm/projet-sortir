@@ -59,7 +59,7 @@
                         <a href="{{ path('app_sortie_inscription', {id : sortie.id}) }}" class="btn btn-outline-success">S'inscrire</a>
                     {% endif %}
                     {% if sortie.organisateur.username == app.user.username %}
-                        <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-secondary">Modifier</a>
+                        <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-secondary" target="_self">Modifier</a>
                     {% else %}
                         <a href="{{ path('app_sortie_detail', {id : sortie.id}) }}" class="btn btn-secondary">Afficher</a>
                     {% endif %}
