@@ -44,15 +44,29 @@
                                     Publier la sortie
                                 </button>
 
-                                <button type="submit" name="action" value="ANN" class="btn btn-danger flex-fill">
+                                <button type="submit" name="action" value="ANN" class="btn btn-warning flex-fill">
                                     Annuler
                                 </button>
-                            </div>
+
 
                             {{ form_end(sortieForm, { render_rest: false }) }}
 
                         </div>
-                    </div>
+                            {% if sortie.id is not null %}
+                                <form method="post"
+                                      action="{{ path('app_sortie_suppression', {id: sortie.id}) }}"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette sortie ?');"
+                                      class="mt-4">
+
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sortie.id) }}">
+
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Supprimer la sortie
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                        </div>
 
                 </div>
             </div>
