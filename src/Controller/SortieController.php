@@ -155,24 +155,25 @@ final class SortieController extends AbstractController
     public function inscrption(Sortie $sortie, EntityManagerInterface $em): Response
     {
 
-
-        if ($sortie->getEtat()->getCode() == 'OUV' && $sortie->getDateLimiteInscription() > new \DateTime('now')) {
-            $inscription = new Inscription();
-            $inscription->setSortie($sortie);
-            $inscription->setDateInscription(new \DateTime('now'));
-            $inscription->setParticipant($this->getUser());
-            $em->persist($inscription);
-            $em->flush();
-            $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été enregistrée");
-
-            if ($sortie->getInscriptions()->count() >= $sortie->getNbInscriptionsMax()){
-                $etat = $em->getRepository(Etat::class)->findOneBy(['code' => 'CLO']);
-                $sortie->setEtat($etat);
-                $em->persist($sortie);
+        if ($sortie->getInscriptions()->count() < $sortie->getNbInscriptionsMax()) {
+            if ($sortie->getEtat()->getCode() == 'OUV' && $sortie->getDateLimiteInscription() > new \DateTime('now')) {
+                $inscription = new Inscription();
+                $inscription->setSortie($sortie);
+                $inscription->setDateInscription(new \DateTime('now'));
+                $inscription->setParticipant($this->getUser());
+                $em->persist($inscription);
                 $em->flush();
-            };
+                $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été enregistrée");
 
-            return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+                if ($sortie->getInscriptions()->count() >= $sortie->getNbInscriptionsMax()) {
+                    $etat = $em->getRepository(Etat::class)->findOneBy(['code' => 'CLO']);
+                    $sortie->setEtat($etat);
+                    $em->persist($sortie);
+                    $em->flush();
+                };
+
+                return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+            }
         }
 
         $this->addFlash('danger', "Votre inscription à la sortie {$sortie->getNom()} n'a pas été prise en compte");
