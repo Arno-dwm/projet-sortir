@@ -68,4 +68,48 @@ final class AdminController extends AbstractController
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
+    #[Route('/actif/{id}', name: 'app_actif', requirements: ['id' => '\d+'])]
+    public function rendreActif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $uRepo->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non reconnu');
+        }
+        $token = $request->query->get('_token');
+        if ($this->isCsrfTokenValid('actif' . $user->getId(), $token)) {
+
+            $user->setActif(true);
+            $em->persist($user);
+            $em->flush($user);
+
+            $this->addFlash('success', ' L\'utilisateur' . $user->getUsername() . ' est actif');
+            return $this->redirectToRoute('app_admin');
+        }
+
+        $this->addFlash('danger', "Action impossible");
+        return $this->redirectToRoute('app_home');
+    }
+    #[Route('/inactif/{id}', name: 'app_inactif', requirements: ['id' => '\d+'])]
+    public function rendreInactif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $uRepo->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non reconnu');
+        }
+        $token = $request->query->get('_token');
+        if ($this->isCsrfTokenValid('inactif' . $user->getId(), $token)) {
+
+            $user->setActif(false);
+            $em->persist($user);
+            $em->flush($user);
+
+            $this->addFlash('success', ' L\'utilisateur' . $user->getUsername() . ' est inactif');
+            return $this->redirectToRoute('app_admin');
+        }
+
+        $this->addFlash('danger', "Action impossible");
+        return $this->redirectToRoute('app_home');
+    }
 }
