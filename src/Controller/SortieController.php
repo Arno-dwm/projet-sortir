@@ -51,6 +51,16 @@ final class SortieController extends AbstractController
             $sortie->setEtat($etat);
 
             $em->persist($sortie);
+
+            // Ajout de l'organisateur comme inscrit.
+            $inscription = new Inscription();
+            $inscription->setSortie($sortie);
+            $inscription->setParticipant($user);
+            $inscription->setDateInscription(new \DateTime('now'));
+
+            $em->persist($inscription);
+
+
             $em->flush();
 
             $this->addFlash('success', 'Une nouvelle proposition de sortie a été enregistrée !');
@@ -67,6 +77,8 @@ final class SortieController extends AbstractController
             $lieuxArray[$lieu->getId()] = [
                 'rue' => $lieu->getRue(),
                 'codePostal' => $lieu->getVille()?->getCodePostal(),
+                'latitude' => $lieu->getLatitude(),
+                'longitude' => $lieu->getLongitude(),
             ];
         }
 
@@ -97,6 +109,7 @@ final class SortieController extends AbstractController
     #[Route('/detail/{id}', name: '_detail', requirements: ['id' => '\d+'])]
     public function detail(Sortie $sortie): Response
     {
+
         return $this->render('sortie/detail-sortie.html.twig', [
             'sortie' => $sortie,
         ]);
@@ -105,14 +118,21 @@ final class SortieController extends AbstractController
     #[Route('/inscription/{id}', name: '_inscription', requirements: ['id' => '\d+'])]
     public function inscrption(Sortie $sortie, EntityManagerInterface $em): Response
     {
-        $inscription = new Inscription();
-        $inscription->setSortie($sortie);
-        $inscription->setDateInscription(new \DateTime('now'));
-        $inscription->setParticipant($this->getUser());
-        $em->persist($inscription);
-        $em->flush();
-        $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été enregistrée");
+
+        if ($sortie->getEtat()->getCode() == 'OUV' && $sortie->getDateLimiteInscription() > new \DateTime('now')) {
+            $inscription = new Inscription();
+            $inscription->setSortie($sortie);
+            $inscription->setDateInscription(new \DateTime('now'));
+            $inscription->setParticipant($this->getUser());
+            $em->persist($inscription);
+            $em->flush();
+            $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été enregistrée");
+            return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        $this->addFlash('danger', "Votre inscription à la sortie {$sortie->getNom()} n'a pas été prise en compte");
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+
     }
 
     #[Route('/desinscription/{id}', name: '_desinscription', requirements: ['id' => '\d+'])]

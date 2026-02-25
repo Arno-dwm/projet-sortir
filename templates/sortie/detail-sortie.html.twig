@@ -23,11 +23,13 @@
                         {% set classBadge = "bg-danger" %}
                     {% elseif sortie.etat.code == 'FIN' %}
                         {% set classBadge = "bg-dark" %}
-
+                    {% else %}
+                        {% set classBadge = "bg-primary" %}
                     {% endif %}
                     <div class="d-flex justify-content-center">
                         <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
                     </div>
+
                     <div class="row justify-content-center ">
                         <div class="row align-items-start mt-2">
                             <div class="col-6 col-lg-3 fw-bold">
@@ -69,7 +71,15 @@
 
                     {# ------------ Affichage des isncriptions -------------- #}
                     <div class="mt-2">
-                        <h3 class="text-center"> Liste des participants inscrits</h3>
+                        <h3 class="text-center"> Liste des participants inscrits </h3>
+
+                        <div class="d-flex justify-content-center">
+                            {% if (sortie.nbInscriptionsMax - sortie.inscriptions.count) > 1 %}
+                                <span class="badge bg-success mb-2">Place(s) restante(s) : {{ sortie.nbInscriptionsMax - sortie.inscriptions.count }}</span>
+                            {% else %}
+                                <span class="badge bg-danger mb-2">Place restante : {{ sortie.nbInscriptionsMax - sortie.inscriptions.count }}</span>
+                            {% endif %}
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover table-striped border">
 
@@ -83,18 +93,18 @@
                                 <tbody>
                                 {% for inscrit in sortie.inscriptions %}
                                     {% if inscrit.participant.username == app.user.userIdentifier %}
-                                    <tr class="table-success">
-                                        <td><strong>{{ inscrit.participant.username }}</strong></td>
-                                        <td><strong>{{ inscrit.participant.nom|upper }}</strong></td>
-                                        <td><strong>{{ inscrit.participant.prenom }}</strong></td>
-                                    </tr>
+                                        <tr class="table-success">
+                                            <td><strong>{{ inscrit.participant.username }}</strong></td>
+                                            <td><strong>{{ inscrit.participant.nom|upper }}</strong></td>
+                                            <td><strong>{{ inscrit.participant.prenom }}</strong></td>
+                                        </tr>
                                     {% else %}
-                                    <tr>
-                                        <td>{{ inscrit.participant.username }}</td>
-                                        <td>{{ inscrit.participant.nom|upper }}</td>
-                                        <td>{{ inscrit.participant.prenom }}</td>
-                                    </tr>
-                                        {% endif %}
+                                        <tr>
+                                            <td>{{ inscrit.participant.username }}</td>
+                                            <td>{{ inscrit.participant.nom|upper }}</td>
+                                            <td>{{ inscrit.participant.prenom }}</td>
+                                        </tr>
+                                    {% endif %}
                                 {% else %}
                                     <tr>
                                         <td colspan="3" class="text-center text-muted">
@@ -107,7 +117,7 @@
                         </div>
                     </div>
                     {# ------------ Administration -------------- #}
-                    {% if sortie.etat.libelle == 'Créée' %}
+                    {% if sortie.etat.code == 'CRE' %}
                         {% if app.user == sortie.organisateur or is_granted('ROLE_ADMIN') %}
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
@@ -118,7 +128,7 @@
 
                     {# ------------ Inscirption -------------- #}
                     {% for inscrit in sortie.inscriptions|filter( i => i.participant.userIdentifier == app.user.userIdentifier) %}
-                        {% if sortie.etat.code == 'OUV' or 'CLO' %}
+                        {% if sortie.etat.code == 'OUV' and 'CLO' %}
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('app_sortie_desinscription', {id: sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}"
                                    class="btn btn-outline-danger mt-2"
