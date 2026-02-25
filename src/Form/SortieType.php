@@ -53,6 +53,7 @@ class SortieType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'placeholder' => 'Choisissez un lieu',
+                'attr' => ['id' => 'sortie_lieu'],
 
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [

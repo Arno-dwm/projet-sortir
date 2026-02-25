@@ -88,21 +88,56 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    //TODO faire le controller modifier, juste copié collé de create pour avoir la route dans détail
+   
     #[Route('/modifier/{id}', name: '_modifier', requirements: ['id' => '\d+'])]
     public function modifier(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
     {        //todo
-        $sortieForm = $this->createForm(SortieType::class, $sortie);
+        $user = $this->getUser();
+        $sortieForm = $this->createForm(SortieType::class, $sortie, [
+        'user' => $user
+        ]);
+
         $sortieForm->handleRequest($request);
+
+        $action = $request->request->get('action');
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-            $sortie->setOrganisateur($this->getUser());
-            $em->persist($sortie);
+            $sortie->setOrganisateur($user);
+
+            if($action) {
+
+                $etatCode = match ($action) {
+                    'CRE' => 'CRE',
+                    'OUV' => 'OUV',
+                    'ANN' => 'ANN',
+
+                };
+
+                $etat = $em->getRepository(Etat::class)->findOneBy(['code' => $etatCode]);
+                $sortie->setEtat($etat);
+            }
             $em->flush();
-            $this->addFlash('success', 'Une nouvelle poroposition de sortie à été enregistré!');
+
+            $this->addFlash('success', "La sortie {$sortie->getNom()} a été enregistré!");
             return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
         }
+
+        // Lui indiquer Lieux
+        $lieux = $em->getRepository(Lieu::class)->findAll();
+        $lieuxArray = [];
+        foreach ($lieux as $lieu) {
+            $lieuxArray[$lieu->getId()] = [
+                'rue' => $lieu->getRue(),
+                'codePostal' => $lieu->getVille()?->getCodePostal(),
+                'latitude' => $lieu->getLatitude(),
+                'longitude' => $lieu->getLongitude(),
+            ];
+        }
+
+
         return $this->render('sortie/edit.html.twig', [
-            'sortieForm' => $sortieForm,
+            'sortieForm' => $sortieForm->createView(),
+            'sortie' => $sortie,
+            'lieux' => $lieuxArray,
         ]);
     }
 
