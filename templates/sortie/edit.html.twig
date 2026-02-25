@@ -66,6 +66,8 @@
             const select = document.getElementById('sortie_lieu');
             const rueField = document.getElementById('sortie_rue');
             const cpField = document.getElementById('sortie_codePostal');
+            const latitudeField = document.getElementById('sortie_latitude');
+            const longitudeField = document.getElementById('sortie_longitude');
 
             if (select) {
                 select.addEventListener('change', function (e) {
@@ -75,9 +77,13 @@
                     if (lieux[id]) {
                         if (rueField) rueField.value = lieux[id].rue ?? '';
                         if (cpField) cpField.value = lieux[id].codePostal ?? '';
+                        if(latitudeField) latitudeField.value = lieux[id].latitude ?? '';
+                        if(longitudeField) longitudeField.value = lieux[id].longitude ?? '';
                     } else {
                         if (rueField) rueField.value = '';
                         if (cpField) cpField.value = '';
+                        if(latitudeField) latitudeField.value = '';
+                        if(longitudeField) longitudeField.value = '';
                     }
                 });
             }

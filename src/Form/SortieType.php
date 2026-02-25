@@ -27,24 +27,21 @@ class SortieType extends AbstractType
             ->add('nom', TextType::class, [
                 'label' => 'Nom de la sortie',
             ])
-
             ->add('site', TextType::class, [
                 'label' => 'Ville organisatrice',
                 'data' => $user ? $user->getSite()->getNom() : '',
                 'mapped' => false,
                 'disabled' => true,
             ])
-
             ->add('dateHeureDebut', DateTimeType::class, [
                 'label' => 'Date et heure de la sortie',
                 'widget' => 'single_text',
             ])
-
             ->add('ville', ChoiceType::class, [
                 'label' => 'Ville',
                 'choices' => array_combine(
-                    ['Quimper','Nantes','Niort','Rennes'],
-                    ['Quimper','Nantes','Niort','Rennes']
+                    ['Quimper', 'Nantes', 'Niort', 'Rennes'],
+                    ['Quimper', 'Nantes', 'Niort', 'Rennes']
                 ),
                 'mapped' => false,
             ])
@@ -52,21 +49,18 @@ class SortieType extends AbstractType
                 'label' => 'Date limite d\'inscription',
                 'widget' => 'single_text',
             ])
-
             ->add('lieu', EntityType::class, [
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'placeholder' => 'Choisissez un lieu',
 
             ])
-
             ->add('nbInscriptionsMax', IntegerType::class, [
                 'label' => 'Nombre de places',
-                'attr'=> [
+                'attr' => [
                     'min' => 1,
                 ]
             ])
-
             ->add('rue', TextType::class, [
                 'label' => 'Rue',
                 'mapped' => false,
@@ -83,7 +77,6 @@ class SortieType extends AbstractType
                     'step' => 5,
                 ]
             ])
-
             ->add('codePostal', TextType::class, [
                 'label' => 'Code postal',
                 'mapped' => false,
@@ -93,13 +86,28 @@ class SortieType extends AbstractType
                 ],
                 'required' => false,
             ])
+            ->add('latitude', NumberType::class, [
+                'label' => 'Latitude',
+                'mapped' => false,
+                'scale' => 8,
+                'attr' => [
+                    'readonly' => true,
+                    'step' => 0.00000001,
 
+                ],
+                'required' => false,
+            ])
+            ->add('longitude', NumberType::class, [
+                'label' => 'Longitude',
+                'mapped' => false,
+                'scale' => 8,
+                'attr' => [
+                    'readonly' => true,
+                    'step' => 0.00000001,
 
-
-
-
-
-
+                ],
+                'required' => false,
+            ])
             ->add('infosSortie', TextareaType::class, [
                 'label' => 'Description et infos',
             ]);
