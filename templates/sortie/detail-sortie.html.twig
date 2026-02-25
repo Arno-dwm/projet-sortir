@@ -3,121 +3,127 @@
 {% block title %}{{ parent() }} - Détail Sortie{% endblock %}
 {% block body %}
 
-    <div class="container-fluid mt-5 d-flex justify-content-center">
-        <div class="col-12 col-md-10 col-lg-8">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-body p-5">
+<div class="container-fluid mt-5 d-flex justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
 
 
-                    <h2 class="text-center ">Détail de la Sortie</h2>
-                    {# ------------ Affichage de l'état la Sortie -------------- #}
-                    {% if sortie.etat.code == 'CRE' %}
-                        {% set classBadge = "bg-warning text-black" %}
-                    {% elseif sortie.etat.code == 'OUV' %}
-                        {% set classBadge = "bg-success" %}
-                    {% elseif sortie.etat.code == 'CLO' %}
-                        {% set classBadge = "bg-info" %}
-                    {% elseif sortie.etat.code == 'EC' %}
-                        {% set classBadge = "bg-info" %}
-                    {% elseif sortie.etat.code == 'ANN' %}
-                        {% set classBadge = "bg-danger" %}
-                    {% elseif sortie.etat.code == 'FIN' %}
-                        {% set classBadge = "bg-dark" %}
-                    {% else %}
-                        {% set classBadge = "bg-primary" %}
-                    {% endif %}
+                <h2 class="text-center ">Détail de la Sortie</h2>
+                {# ------------ Affichage de l'état la Sortie -------------- #}
+                {% if sortie.etat.code == 'CRE' %}
+                    {% set classBadge = "bg-warning text-black" %}
+                {% elseif sortie.etat.code == 'OUV' %}
+                    {% set classBadge = "bg-success" %}
+                {% elseif sortie.etat.code == 'CLO' %}
+                    {% set classBadge = "bg-info" %}
+                {% elseif sortie.etat.code == 'EC' %}
+                    {% set classBadge = "bg-info" %}
+                {% elseif sortie.etat.code == 'ANN' %}
+                    {% set classBadge = "bg-danger" %}
+                {% elseif sortie.etat.code == 'FIN' %}
+                    {% set classBadge = "bg-dark" %}
+                {% else %}
+                    {% set classBadge = "bg-primary" %}
+                {% endif %}
+                <div class="d-flex justify-content-center">
+                    <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
+                </div>
+
+                <div class="row justify-content-center ">
+                    <div class="row align-items-start mt-2">
+                        <div class="col-6 col-lg-3 fw-bold">
+                            <p>Nom de la sortie :</p>
+                            <p>Date et heure de la sortie :</p>
+                            <p>Date limite d'inscription :</p>
+                            <p>Nombre de places :</p>
+                            <p>Durée :</p>
+                            <p>Description et infos :</p>
+
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <p>{{ sortie.nom |capitalize }} </p>
+                            <p>{{ sortie.dateHeureDebut |date('d/m/Y H:i') }} </p>
+                            <p>{{ sortie.dateLimiteInscription |date('d/m/Y' ) }} </p>
+                            <p>{{ sortie.nbInscriptionsMax |capitalize }} </p>
+                            <p>{{ sortie.duree |capitalize }} </p>
+                            <p>{{ sortie.infosSortie |capitalize }} </p>
+
+                        </div>
+                        <div class="col-6 col-lg-3 fw-bold">
+                            <p>Ville organisatrice :</p>
+                            <p>Lieu :</p>
+                            <p>Rue :</p>
+                            <p>Code postal : </p>
+                            <p>Latitude : </p>
+                            <p>Longitude : </p>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <p>{{ sortie.organisateur.site.nom |capitalize }} </p>
+                            <p>{{ sortie.lieu.nom |capitalize }} </p>
+                            <p>{{ sortie.lieu.rue |capitalize }} </p>
+                            <p>{{ sortie.lieu.ville.getCodePostal }} </p>
+                            <p>{{ sortie.lieu.latitude |capitalize }} </p>
+                            <p>{{ sortie.lieu.longitude |capitalize }} </p>
+                        </div>
+                    </div>
+                </div>
+
+                {# ------------ Affichage des isncriptions -------------- #}
+                <div class="mt-2">
+                    <h3 class="text-center"> Liste des participants inscrits </h3>
+
                     <div class="d-flex justify-content-center">
-                        <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
+                        {% if (sortie.nbInscriptionsMax - sortie.inscriptions.count) > 1 %}
+                            <span
+                                class="badge bg-success mb-2">Place(s) restante(s) : {{ sortie.nbInscriptionsMax - sortie.inscriptions.count }}</span>
+                        {% else %}
+                            <span
+                                class="badge bg-danger mb-2">Place restante : {{ sortie.nbInscriptionsMax - sortie.inscriptions.count }}</span>
+                        {% endif %}
                     </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped border">
 
-                    <div class="row justify-content-center ">
-                        <div class="row align-items-start mt-2">
-                            <div class="col-6 col-lg-3 fw-bold">
-                                <p>Nom de la sortie :</p>
-                                <p>Date et heure de la sortie :</p>
-                                <p>Date limite d'inscription :</p>
-                                <p>Nombre de places :</p>
-                                <p>Durée :</p>
-                                <p>Description et infos :</p>
-
-                            </div>
-                            <div class="col-6 col-lg-3">
-                                <p>{{ sortie.nom |capitalize }} </p>
-                                <p>{{ sortie.dateHeureDebut |date('d/m/Y H:i') }} </p>
-                                <p>{{ sortie.dateLimiteInscription |date('d/m/Y' ) }} </p>
-                                <p>{{ sortie.nbInscriptionsMax |capitalize }} </p>
-                                <p>{{ sortie.duree |capitalize }} </p>
-                                <p>{{ sortie.infosSortie |capitalize }} </p>
-
-                            </div>
-                            <div class="col-6 col-lg-3 fw-bold">
-                                <p>Ville organisatrice :</p>
-                                <p>Lieu :</p>
-                                <p>Rue :</p>
-                                <p>Code postal : </p>
-                                <p>Latitude : </p>
-                                <p>Longitude : </p>
-                            </div>
-                            <div class="col-6 col-lg-3">
-                                <p>{{ sortie.organisateur.site.nom |capitalize }} </p>
-                                <p>{{ sortie.lieu.nom |capitalize }} </p>
-                                <p>{{ sortie.lieu.rue |capitalize }} </p>
-                                <p>{{ sortie.lieu.ville.getCodePostal }} </p>
-                                <p>{{ sortie.lieu.latitude |capitalize }} </p>
-                                <p>{{ sortie.lieu.longitude |capitalize }} </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {# ------------ Affichage des isncriptions -------------- #}
-                    <div class="mt-2">
-                        <h3 class="text-center"> Liste des participants inscrits </h3>
-
-                        <div class="d-flex justify-content-center">
-                            {% if (sortie.nbInscriptionsMax - sortie.inscriptions.count) > 1 %}
-                                <span class="badge bg-success mb-2">Place(s) restante(s) : {{ sortie.nbInscriptionsMax - sortie.inscriptions.count }}</span>
-                            {% else %}
-                                <span class="badge bg-danger mb-2">Place restante : {{ sortie.nbInscriptionsMax - sortie.inscriptions.count }}</span>
-                            {% endif %}
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped border">
-
-                                <thead class="table-light">
-                                <tr>
-                                    <th>Pseudo</th>
-                                    <th>Nom</th>
-                                    <th>Prénom</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for inscrit in sortie.inscriptions %}
-                                    {% if inscrit.participant.username == app.user.userIdentifier %}
-                                        <tr class="table-success">
-                                            <td><a href="{{ path('app_user_detail', {username : inscrit.participant.username}) }}"><strong>{{ inscrit.participant.username }}</strong></a></td>
-                                            <td><strong>{{ inscrit.participant.nom|upper }}</strong></td>
-                                            <td><strong>{{ inscrit.participant.prenom }}</strong></td>
-                                        </tr>
-                                    {% else %}
-                                        <tr>
-                                            <td><a href="{{ path('app_user_detail', {username : inscrit.participant.username}) }}">{{ inscrit.participant.username }}</a></td>
-                                            <td>{{ inscrit.participant.nom|upper }}</td>
-                                            <td>{{ inscrit.participant.prenom }}</td>
-                                        </tr>
-                                    {% endif %}
+                            <thead class="table-light">
+                            <tr>
+                                <th>Pseudo</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for inscrit in sortie.inscriptions %}
+                                {% if inscrit.participant.username == app.user.userIdentifier %}
+                                    <tr class="table-success">
+                                        <td>
+                                            <a href="{{ path('app_user_detail', {username : inscrit.participant.username}) }}"><strong>{{ inscrit.participant.username }}</strong></a>
+                                        </td>
+                                        <td><strong>{{ inscrit.participant.nom|upper }}</strong></td>
+                                        <td><strong>{{ inscrit.participant.prenom }}</strong></td>
+                                    </tr>
                                 {% else %}
                                     <tr>
-                                        <td colspan="3" class="text-center text-muted">
-                                            Aucun participant inscrit pour le moment.
+                                        <td>
+                                            <a href="{{ path('app_user_detail', {username : inscrit.participant.username}) }}">{{ inscrit.participant.username }}</a>
                                         </td>
+                                        <td>{{ inscrit.participant.nom|upper }}</td>
+                                        <td>{{ inscrit.participant.prenom }}</td>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                                {% endif %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">
+                                        Aucun participant inscrit pour le moment.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    {# ------------ Partie pour les boutons -------------- #}
-                    <div>
+                </div>
+                {# ------------ Partie pour les boutons -------------- #}
+                <div class="d-flex justify-content-around">
                     {# ------------ Administration -------------- #}
                     {% if sortie.etat.code == 'CRE' %}
                         {% if app.user == sortie.organisateur or is_granted('ROLE_ADMIN') %}
@@ -129,30 +135,36 @@
                     {% endif %}
 
                     {# ------------ Inscirption -------------- #}
-                    {% for inscrit in sortie.inscriptions|filter( i => i.participant.userIdentifier == app.user.userIdentifier) %}
-                        {% if sortie.etat.code in ['OUV', 'CLO'] %}
-                            <div class="d-flex justify-content-center">
-                                <a href="{{ path('app_sortie_desinscription', {id: sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}"
-                                   class="btn btn-outline-danger mt-2"
-                                   onclick="return confirm('Voulez vous confirmer la supression ?')">Se désister </a>
+                    {% if app.user != sortie.organisateur %}
+                            {% for inscrit in sortie.inscriptions|filter( i => i.participant.userIdentifier == app.user.userIdentifier) %}
+                            {% if sortie.etat.code in ['OUV', 'CLO'] %}
+                                <div class="d-flex justify-content-center">
+                                    <a href="{{ path('app_sortie_desinscription', {id: sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}"
+                                       class="btn btn-outline-danger mt-2"
+                                       onclick="return confirm('Voulez vous confirmer votre désinscription ?')">Se
+                                        désister </a>
 
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        {% if sortie.etat.code == 'OUV' %}
-                            <div class="d-flex justify-content-center">
-                                <a href="{{ path('app_sortie_inscription', {id: sortie.id}) }}"
-                                   class="btn btn-success mt-2">S'inscrire</a>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% else %}
+
+                            {% if sortie.etat.code == 'OUV' %}
+                                <div class="d-flex justify-content-center">
+                                    <a href="{{ path('app_sortie_inscription', {id: sortie.id}) }}"
+                                       class="btn btn-success mt-2">S'inscrire</a>
+                                </div>
+                            {% endif %}
+
+                            {% endfor %}
+                    {% endif %}
                     <div class="d-flex justify-content-center">
-                        <a href="{{ path('app_home')}}"
-                           class="btn btn-light mt-2">Retour</a>
-                    </div>
+                        <a href="{{ path('app_home') }}"
+                           class="btn btn-secondary mt-2">Retour</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
