@@ -3,9 +3,12 @@
 namespace App\Form;
 
 use App\DTO\SortieFilterDTO;
+use App\Entity\Site;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +18,14 @@ class SortieFilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
         $builder
+            ->add('site', EntityType::class, [
+                'class' => Site::class,
+                'choice_label' => 'nom',   // propriété affichée dans <option>
+                'placeholder' => 'Choisir un site',
+                'required' => false,
+            ])
             ->add('inputSearch', TextType::class, [
                 'required' => false,
                 'label' => 'Le nom de la sortie contient :',
