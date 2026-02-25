@@ -85,24 +85,60 @@ final class SortieController extends AbstractController
         return $this->render('sortie/edit.html.twig', [
             'sortieForm' => $sortieForm->createView(),
             'lieux' => $lieuxArray,
+            'sortie' => $sortie,
         ]);
     }
 
-    //TODO faire le controller modifier, juste copié collé de create pour avoir la route dans détail
+
     #[Route('/modifier/{id}', name: '_modifier', requirements: ['id' => '\d+'])]
     public function modifier(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
-    {        //todo
-        $sortieForm = $this->createForm(SortieType::class, $sortie);
+    {
+        $user = $this->getUser();
+        $sortieForm = $this->createForm(SortieType::class, $sortie, [
+            'user' => $user
+        ]);
+
         $sortieForm->handleRequest($request);
+
+        $action = $request->request->get('action');
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-            $sortie->setOrganisateur($this->getUser());
-            $em->persist($sortie);
+            $sortie->setOrganisateur($user);
+
+            if ($action) {
+
+                $etatCode = match ($action) {
+                    'CRE' => 'CRE',
+                    'OUV' => 'OUV',
+                    'ANN' => 'ANN',
+
+                };
+
+                $etat = $em->getRepository(Etat::class)->findOneBy(['code' => $etatCode]);
+                $sortie->setEtat($etat);
+            }
             $em->flush();
-            $this->addFlash('success', 'Une nouvelle poroposition de sortie à été enregistré!');
+
+            $this->addFlash('success', "La sortie {$sortie->getNom()} a été enregistré!");
             return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
         }
+
+        // Lui indiquer Lieux
+        $lieux = $em->getRepository(Lieu::class)->findAll();
+        $lieuxArray = [];
+        foreach ($lieux as $lieu) {
+            $lieuxArray[$lieu->getId()] = [
+                'rue' => $lieu->getRue(),
+                'codePostal' => $lieu->getVille()?->getCodePostal(),
+                'latitude' => $lieu->getLatitude(),
+                'longitude' => $lieu->getLongitude(),
+            ];
+        }
+
+
         return $this->render('sortie/edit.html.twig', [
-            'sortieForm' => $sortieForm,
+            'sortieForm' => $sortieForm->createView(),
+            'sortie' => $sortie,
+            'lieux' => $lieuxArray,
         ]);
     }
 
@@ -119,6 +155,7 @@ final class SortieController extends AbstractController
     public function inscrption(Sortie $sortie, EntityManagerInterface $em): Response
     {
 
+
         if ($sortie->getEtat()->getCode() == 'OUV' && $sortie->getDateLimiteInscription() > new \DateTime('now')) {
             $inscription = new Inscription();
             $inscription->setSortie($sortie);
@@ -127,6 +164,14 @@ final class SortieController extends AbstractController
             $em->persist($inscription);
             $em->flush();
             $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été enregistrée");
+
+            if ($sortie->getInscriptions()->count() >= $sortie->getNbInscriptionsMax()){
+                $etat = $em->getRepository(Etat::class)->findOneBy(['code' => 'CLO']);
+                $sortie->setEtat($etat);
+                $em->persist($sortie);
+                $em->flush();
+            };
+
             return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
         }
 
@@ -144,9 +189,53 @@ final class SortieController extends AbstractController
             $em->remove($inscription);
             $em->flush();
             $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été supprimé");
+
+            if ($sortie->getInscriptions()->count() < $sortie->getNbInscriptionsMax()){
+                $etat = $em->getRepository(Etat::class)->findOneBy(['code' => 'OUV']);
+                $sortie->setEtat($etat);
+                $em->persist($sortie);
+                $em->flush();
+            };
+
             return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+
         }
         $this->addFlash('danger', 'Cette action est impossible !');
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
     }
+
+    #[Route('/delete/{id}', name: '_suppression', requirements: ['id' => '\d+'])]
+    public function delete(Request $request, Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        $token = $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('delete' . $sortie->getId(), $token)) {
+            $this->addFlash('danger', 'Cette action est impossible !');
+            return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        // Récupérer les inscriptions
+        $inscriptions = $sortie->getInscriptions(); // assuming Sortie has OneToMany $inscriptions
+
+        // Vérifier si d'autres participants sont inscrits
+        $otherInscriptions = $inscriptions->filter(function ($inscription) {
+            return $inscription->getParticipant() !== $this->getUser();
+        });
+
+        if ($otherInscriptions->count() > 0) {
+            $this->addFlash('danger', "Impossible de supprimer la sortie : d'autres participants sont inscrits !");
+            return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        // Supprimer la sortie (et automatiquement ton inscription)
+        foreach ($inscriptions as $inscription) {
+            $em->remove($inscription);
+        }
+        $em->remove($sortie);
+        $em->flush();
+
+        $this->addFlash('success', "La sortie {$sortie->getNom()} a été supprimée !");
+        return $this->redirectToRoute('app_home');
+    }
+
 }

@@ -44,15 +44,29 @@
                                     Publier la sortie
                                 </button>
 
-                                <button type="submit" name="action" value="ANN" class="btn btn-danger flex-fill">
+                                <button type="submit" name="action" value="ANN" class="btn btn-warning flex-fill">
                                     Annuler
                                 </button>
-                            </div>
+
 
                             {{ form_end(sortieForm, { render_rest: false }) }}
 
                         </div>
-                    </div>
+                            {% if sortie.id is not null %}
+                                <form method="post"
+                                      action="{{ path('app_sortie_suppression', {id: sortie.id}) }}"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette sortie ?');"
+                                      class="mt-4">
+
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sortie.id) }}">
+
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Supprimer la sortie
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                        </div>
 
                 </div>
             </div>
@@ -61,32 +75,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
+alert("coucou")
             const lieux = {{ lieux|json_encode|raw }};
-            const select = document.getElementById('sortie_lieu');
+
+            const select = document.getElementById('{{ sortieForm.lieu.vars.id }}');
+            const rueField = document.getElementById('{{ sortieForm.rue.vars.id }}');
+            const cpField = document.getElementById('{{ sortieForm.codePostal.vars.id }}');
+            const latitudeField = document.getElementById('{{ sortieForm.latitude.vars.id }}');
+            const longitudeField = document.getElementById('{{ sortieForm.longitude.vars.id }}');
+            /*const select = document.getElementById('sortie_lieu');
             const rueField = document.getElementById('sortie_rue');
             const cpField = document.getElementById('sortie_codePostal');
             const latitudeField = document.getElementById('sortie_latitude');
             const longitudeField = document.getElementById('sortie_longitude');
+*/
+            if (!select) return ;
 
-            if (select) {
-                select.addEventListener('change', function (e) {
+            function updateLieuFields(){
 
-                    const id = this.value;
-                    console.log(lieux)
+              //  select.addEventListener('change', function (e) {
+
+                    const id = select.value;
+
                     if (lieux[id]) {
                         if (rueField) rueField.value = lieux[id].rue ?? '';
                         if (cpField) cpField.value = lieux[id].codePostal ?? '';
-                        if(latitudeField) latitudeField.value = lieux[id].latitude ?? '';
-                        if(longitudeField) longitudeField.value = lieux[id].longitude ?? '';
+                        if (latitudeField) latitudeField.value = lieux[id].latitude ?? '';
+                        if (longitudeField) longitudeField.value = lieux[id].longitude ?? '';
                     } else {
                         if (rueField) rueField.value = '';
                         if (cpField) cpField.value = '';
-                        if(latitudeField) latitudeField.value = '';
-                        if(longitudeField) longitudeField.value = '';
+                        if (latitudeField) latitudeField.value = '';
+                        if (longitudeField) longitudeField.value = '';
                     }
-                });
-            }
+                }
+
+                    // remplir au changement
+                    select.addEventListener('change', updateLieuFields);
+
+                    // remplir au chargement si une valeur est déjà sélectionnée
+                    updateLieuFields();
+
 
         });
     </script>
