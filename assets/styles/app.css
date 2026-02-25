@@ -27,6 +27,13 @@ body {
 .card {
     margin-left:10px;
 }
+.card-text a{
+    color:cadetblue;
+    text-decoration: none;
+}
+.table-success a{
+    color:cadetblue;
+}
 .card li {
     list-style-type: none;
     text-align: justify;

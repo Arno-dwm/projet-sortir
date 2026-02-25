@@ -35,8 +35,10 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{ sortie.nom }}</h5>
-                <p class="card-text">Organisé par {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }}
-
+                <p class="card-text">Organisé par
+                    <a href="{{ path('app_user_detail', {username : sortie.organisateur.username}) }}">
+                        {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }}
+                    </a>
                 </p>
                 {% if sortie.id in inscriptions %}
                     <span class="badge text-bg-success">Inscrit</span>
@@ -74,8 +76,9 @@
 
 
     </section>
-
-    <a href="{{ path('app_sortie_create') }}" class="btn btn-primary">Créer sortie</a>
+    {% if is_granted(('IS_AUTHENTICATED')) %}
+        <a href="{{ path('app_sortie_create') }}" class="btn btn-primary">Créer sortie</a>
+    {% endif %}
 
 
 
