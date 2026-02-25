@@ -43,7 +43,6 @@ final class SortieController extends AbstractController
             $etatCode = match ($action) {
                 'CRE' => 'CRE',
                 'OUV' => 'OUV',
-                'ANN' => 'ANN',
 
             };
 
@@ -109,7 +108,6 @@ final class SortieController extends AbstractController
                 $etatCode = match ($action) {
                     'CRE' => 'CRE',
                     'OUV' => 'OUV',
-                    'ANN' => 'ANN',
 
                 };
 

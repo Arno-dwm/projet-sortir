@@ -34,7 +34,7 @@ class SortieType extends AbstractType
                 'disabled' => true,
             ])
             ->add('dateHeureDebut', DateTimeType::class, [
-                'label' => 'Date et heure de la sortie',
+                'label' => 'Date et Heure de la sortie',
                 'widget' => 'single_text',
             ])
             ->add('ville', ChoiceType::class, [
