@@ -61,14 +61,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
+alert("coucou")
             const lieux = {{ lieux|json_encode|raw }};
-            const select = document.getElementById('sortie_lieu');
+
+            const select = document.getElementById('{{ sortieForm.lieu.vars.id }}');
+            const rueField = document.getElementById('{{ sortieForm.rue.vars.id }}');
+            const cpField = document.getElementById('{{ sortieForm.codePostal.vars.id }}');
+            const latitudeField = document.getElementById('{{ sortieForm.latitude.vars.id }}');
+            const longitudeField = document.getElementById('{{ sortieForm.longitude.vars.id }}');
+            /*const select = document.getElementById('sortie_lieu');
             const rueField = document.getElementById('sortie_rue');
             const cpField = document.getElementById('sortie_codePostal');
             const latitudeField = document.getElementById('sortie_latitude');
             const longitudeField = document.getElementById('sortie_longitude');
-
+*/
             if (!select) return ;
 
             function updateLieuFields(){
