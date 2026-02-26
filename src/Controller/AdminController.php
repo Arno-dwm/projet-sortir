@@ -24,7 +24,7 @@ final class AdminController extends AbstractController
     {
         $users = $uRepo->findAll();
 
-        return $this->render('admin/gestion.html.twig', [
+        return $this->render('admin/gestion-utilisateur.html.twig', [
             'users' => $users,
         ]);
     }

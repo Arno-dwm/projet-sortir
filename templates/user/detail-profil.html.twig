@@ -8,39 +8,41 @@
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-5">
 
+                    <a href="{{ path('app_home') }}" class="btn btn-secondary mt-2">Retour</a>
+
                     <h1 class="text-center">{{ user.username }}</h1>
 
                     <div class="row justify-content-center">
                         <div class="col-12 col-md-8">
 
 
-                            <div class="row align-items-start">
-                                <div class="col-3">
-                                    <p>Notre futur image</p>
-                                </div>
-                                <div class="col-4">
-                                    <p>Prénom : </p>
-                                    <p>Nom : </p>
-                                    <p>Téléphone : </p>
-                                    <p>Email : </p>
-                                    <p>Ville de rattachement : </p>
-                                    <a href="{{ path('app_home') }}" class="btn btn-primary mt-2">Retour</a>
-                                </div>
-                                <div class="col-5">
-                                    <p>{{ user.prenom |capitalize }}</p>
-                                    <p>{{ user.nom |capitalize }}</p>
-                                    <p>{{ user.telephone }}</p>
-                                    <p>{{ user.mail }}</p>
-                                    <p>{{ user.site.getNom }}</p>
+                            <div class="row justify-content-center">
+
+                                <img src="{{ asset('images/users/' ~user.urlPhoto) }}" alt="Photo Profil"
+                                     class="img-fluid"
+                                     style="max-width:300px;">
+                                <div class="row justify-content-end">
+                                    <div class="col-md-6 mb-3 text-end">
+                                        <p>Prénom : </p>
+                                        <p>Nom : </p>
+                                        <p>Téléphone : </p>
+                                        <p>Email : </p>
+                                        <p>Ville de rattachement : </p>
+
+                                    </div>
+                                    <div class="col-md-6 mb-3 text-start">
+                                        <p>{{ user.prenom |capitalize }}</p>
+                                        <p>{{ user.nom |capitalize }}</p>
+                                        <p>{{ user.telephone }}</p>
+                                        <p>{{ user.mail }}</p>
+                                        <p>{{ user.site.getNom }}</p>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
