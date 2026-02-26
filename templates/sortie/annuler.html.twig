@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - Détail Sortie{% endblock %}
+{% block body %}
+
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+
+
+                    <h2 class="text-center ">Annuler la Sortie</h2>
+                    {# ------------ Affichage de l'état la Sortie -------------- #}
+                    {% if sortie.etat.code == 'CRE' %}
+                        {% set classBadge = "bg-warning text-black" %}
+                    {% elseif sortie.etat.code == 'OUV' %}
+                        {% set classBadge = "bg-success" %}
+                    {% elseif sortie.etat.code == 'CLO' %}
+                        {% set classBadge = "bg-info" %}
+                    {% elseif sortie.etat.code == 'EC' %}
+                        {% set classBadge = "bg-info" %}
+                    {% elseif sortie.etat.code == 'ANN' %}
+                        {% set classBadge = "bg-danger" %}
+                    {% elseif sortie.etat.code == 'FIN' %}
+                        {% set classBadge = "bg-dark" %}
+                    {% else %}
+                        {% set classBadge = "bg-primary" %}
+                    {% endif %}
+                    <div class="d-flex justify-content-center">
+                        <span class="badge {{ classBadge }} ">{{ sortie.etat.libelle }}</span>
+                    </div>
+
+                    <div class="row justify-content-between align-items-center">
+                        <div class="row mt-2">
+                            <div class="col fw-bold">
+                                <p>Nom de la sortie :</p>
+                                <p>Date et heure de la sortie :</p>
+                                <p>Ville organisatrice :</p>
+                                <p>Lieu :</p>
+                            </div>
+                            <div class="col col-lg-9">
+                                <p>{{ sortie.nom |capitalize }} </p>
+                                <p>{{ sortie.dateHeureDebut |date('d/m/Y H:i') }} </p>
+                                <p>{{ sortie.organisateur.site.nom |capitalize }} </p>
+                                <p>{{ sortie.lieu.nom |capitalize }} </p>
+                            </div>
+
+                        </div>
+                        {{ form(formAnnuler) }}
+
+                    </div>
+
+
+
+                    {# ------------ Partie pour les boutons -------------- #}
+                    <div class="d-flex justify-content-around">
+                        {# ------------ Administration -------------- #}
+                        {% if sortie.etat.code == 'CRE' %}
+                            {% if app.user == sortie.organisateur or is_granted('ROLE_ADMIN') %}
+                                <div class="d-flex justify-content-center">
+                                    <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
+                                       class="btn btn-outline-danger mt-2" target="_self">Modifier</a>
+
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" form="annulation-form" class="btn btn-primary mt-2">Enregistrer</button>
+                            <a href="{{ path('app_home') }}"
+                               class="btn btn-secondary mt-2 ms-5">Retour</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

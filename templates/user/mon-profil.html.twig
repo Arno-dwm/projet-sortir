@@ -15,7 +15,12 @@
                         <div class="col-12 col-md-8">
 
                             {{ form_start(user_form) }}
-
+                            <div class="row justify-content-center">
+                            {% if user.urlPhoto is defined %}
+                                <img src="{{ asset('images/users/' ~user.urlPhoto) }}" alt="Photo Profil" class="img-thumbnail"
+                                     style="max-width:300px;">
+                            {% endif %}
+                            </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     {{ form_row(user_form.username) }}
@@ -37,15 +42,19 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    {{ form_row(user_form.plainPassword.first) }}
+                                    {{ form_row(user_form.currentPassword) }}
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    {{ form_row(user_form.plainPassword.second) }}
+                                    {{ form_row(user_form.newPassword.first) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.imgProfil) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.newPassword.second) }}
                                 </div>
 
-                                <div class="w-100">
-                                    {{ form_row(user_form.lienImgFile) }}
-                                </div>
+
                             </div>
 
                             <div class="d-flex gap-2 mt-4">
@@ -61,6 +70,8 @@
                             {{ form_end(user_form) }}
 
                         </div>
+
+
                     </div>
 
                 </div>
