@@ -40,7 +40,9 @@
                 {% set classVisible="card card-visibilityOn" %}
                 {% elseif sortie.etat.code == 'CRE' and not (sortie.organisateur.username == app.user.username) %}
                     {% set classVisible="card card-visibilityOff" %}
-                {% else %}
+                {% elseif sortie.etat.code == 'ANN' %}
+                    {% set classVisible="card card-visibilityOff" %}
+                    {% else %}
                     {% set classVisible="card card-visibilityOn" %}
             {% endif %}
                 <div class="{{ classVisible }}" style="width: 18rem;">
@@ -81,8 +83,8 @@
                             {% if sortie.organisateur.username == app.user.username %}
                                 {% if sortie.etat.code == 'CRE' %}
                                     <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-secondary" target="_self">Modifier</a>
-                                    {% else %}
-                                        <a href="#" class="btn btn-warning" target="_self">Annuler</a>
+                                    {% elseif not(sortie.etat.code in ['ANN', 'FIN']) %}
+                                        <a href="{{ path('app_sortie_annuler', {id: sortie.id}) }}" class="btn btn-warning" target="_self">Annuler</a>
                                     {% endif %}
                             {% endif %}
 {#                            <a href="{{ path('app_sortie_detail', {id : sortie.id}) }}" class="btn btn-secondary">Afficher</a>#}
