@@ -47,7 +47,7 @@
                                             {% if user.userIdentifier != app.user.userIdentifier %}
                                                 {% if user.userIdentifier != 'admin' %}
                                             <a href="{{ path('app_admin_inactif', {id: user.id, _token: csrf_token('inactif' ~ user.id)}) }}"
-                                               class="btn btn-warning btn-sm ms-lg-4">Passer inactif</a></td>
+                                               class="btn btn-secondary btn-sm ms-lg-4">Passer inactif</a></td>
                                             {% endif %}
                                             {% endif %}
                                     {% else %}
