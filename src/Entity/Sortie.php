@@ -52,7 +52,7 @@ class Sortie
     /**
      * @var Collection<int, Inscription>
      */
-    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'sortie', fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'sortie')]
     private Collection $inscriptions;
 
     public function __construct()
