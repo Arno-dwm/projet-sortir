@@ -36,45 +36,59 @@
     {{ form_end(form) }}
     <section class="sorties-list">
         {% for sortie in sorties %}
-            {% if not(sortie.etat.code == "CRE") %}
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">{{ sortie.nom }}</h5>
-                <p class="card-text">Organisé par
-                    <a href="{{ path('app_user_detail', {username : sortie.organisateur.username}) }}">
-                        {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }}
-                    </a>
-                </p>
-                {% if sortie.id in inscriptions %}
-                    <span class="badge text-bg-success">Inscrit</span>
-                {% endif %}
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><span>Date de la sortie </span> {{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</li>
-                <li class="list-group-item"><span>Clotûre </span>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</li>
-                <li class="list-group-item">{{ sortie.inscriptions | length }} /
-                    {{ sortie.nbInscriptionsMax }} inscrits</li>
-                <li class="list-group-item">{{ sortie.etat.libelle }}</li>
-            </ul>
-            <div class="card-body">
-                {% if is_granted(('IS_AUTHENTICATED')) %}
-                    {% if sortie.id in inscriptions %}
-                        <a href="{{ path('app_sortie_desinscription', {id : sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}" class="btn btn-outline-danger">Se désister</a>
-                    {% else %}
-                        <a href="{{ path('app_sortie_inscription', {id : sortie.id}) }}" class="btn btn-outline-success">S'inscrire</a>
-                    {% endif %}
-                    {% if sortie.organisateur.username == app.user.username %}
-                        <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-secondary" target="_self">Modifier</a>
-                    {% else %}
-                        <a href="{{ path('app_sortie_detail', {id : sortie.id}) }}" class="btn btn-secondary">Afficher</a>
-                    {% endif %}
-
-                {% endif %}
-
-
-            </div>
-        </div>
+            {% if sortie.etat.code == 'CRE' and sortie.organisateur.username == app.user.username %}
+                {% set classVisible="card card-visibilityOn" %}
+                {% elseif sortie.etat.code == 'CRE' and not (sortie.organisateur.username == app.user.username) %}
+                    {% set classVisible="card card-visibilityOff" %}
+                {% else %}
+                    {% set classVisible="card card-visibilityOn" %}
             {% endif %}
+                <div class="{{ classVisible }}" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{{ path('app_sortie_detail', {id : sortie.id}) }}">{{ sortie.nom }}</a></h5>
+                        <p class="card-text">Organisé par
+                            <a href="{{ path('app_user_detail', {username : sortie.organisateur.username}) }}">
+                                {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }}
+                            </a>
+                        </p>
+                        {% if sortie.id in inscriptions %}
+                            <span class="badge text-bg-success">Inscrit</span>
+                        {% endif %}
+                        {# if granted à enlever si home limitée aux user connectés #}
+                        {% if is_granted(('IS_AUTHENTICATED')) %}
+                            {% if sortie.organisateur.username == app.user.username %}
+                                <span class="badge text-bg-info">Organisateur</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><span>Date de la sortie </span> {{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</li>
+                        <li class="list-group-item"><span>Clotûre </span>{{ sortie.dateLimiteInscription | date('d/m/Y')}}</li>
+                        <li class="list-group-item">{{ sortie.inscriptions | length }} /
+                            {{ sortie.nbInscriptionsMax }} inscrits</li>
+                        <li class="list-group-item">{{ sortie.etat.libelle }}</li>
+                    </ul>
+                    <div class="card-body">
+                        {% if is_granted(('IS_AUTHENTICATED')) %}
+                            {% if sortie.id in inscriptions %}
+                                {% if not (sortie.organisateur.username == app.user.username) %}
+                                <a href="{{ path('app_sortie_desinscription', {id : sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}" class="btn btn-outline-danger">Se désister</a>
+
+                                {% endif %}
+                                {% else %}
+                                <a href="{{ path('app_sortie_inscription', {id: sortie.id, _token: csrf_token('inscription_create' ~ sortie.id)}) }}" class="btn btn-outline-success">S'inscrire</a>
+                            {% endif %}
+                            {% if sortie.organisateur.username == app.user.username %}
+                                {% if sortie.etat.code == 'CRE' %}
+                                    <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-secondary" target="_self">Modifier</a>
+                                    {% else %}
+                                        <a href="#" class="btn btn-warning" target="_self">Annuler</a>
+                                    {% endif %}
+                            {% endif %}
+{#                            <a href="{{ path('app_sortie_detail', {id : sortie.id}) }}" class="btn btn-secondary">Afficher</a>#}
+                        {% endif %}
+                    </div>
+                </div>
         {% else %}
             <p class="alert alert-danger notFound">Pas de sortie correspondant au(x) critère(s) choisi(s)</p>
         {% endfor %}

@@ -10,27 +10,35 @@ body {
     align-items: center;
     background-color: whitesmoke;
     border-radius:6px;
-
     width:70vw;
     margin-left:10px;
+    max-width: 100%;
 }
 
 .form-container div{
     margin:10px;
+    min-width: 0;
 
 }
 /* Cards sorties*/
 .sorties-list{
     display:flex;
-    margin-top:10px;
     margin-bottom:10px;
+    flex-wrap: wrap;
 }
 .card {
     margin-left:10px;
+    margin-top:10px;
 }
 .card-text a{
     color:cadetblue;
     text-decoration: none;
+}
+.card-visibilityOff{
+    display:none
+}
+.card-visibilityOn{
+
 }
 .table-success a{
     color:cadetblue;
