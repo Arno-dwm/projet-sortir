@@ -6,7 +6,9 @@ use App\Entity\Inscription;
 use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Form\AnnulerSortieType;
 use App\Form\SortieType;
+use App\Repository\EtatRepository;
 use App\Repository\InscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -239,6 +241,35 @@ final class SortieController extends AbstractController
 
         $this->addFlash('success', "La sortie {$sortie->getNom()} a été supprimée !");
         return $this->redirectToRoute('app_home');
+    }
+
+    #[Route('/annuler/{id}', name: '_annuler', requirements: ['id' => '\d+'])]
+    public function annuler(Request $request, Sortie $sortie, EntityManagerInterface $em, EtatRepository $etatRepository): Response
+    {
+        $form= $this->createForm(AnnulerSortieType::class, null, [
+            'attr' => [
+                'id' => 'annulation-form'
+            ]
+        ]);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $infos=$sortie->getInfosSortie();
+            $motif = $form->get('motif')->getData();
+            $sortie->setInfosSortie("Motif : {$motif}. {$infos}");
+            $sortie->setEtat($etatRepository->findOneBy(['code' => 'ANN']));
+
+            $em->persist($sortie);
+            $em->flush();
+            $this->addFlash('success', "La sortie {$sortie->getNom()} a été annulée !");
+            $this->redirectToRoute('sortie/detail-sortie.html.twig', ['id'=>$sortie->getId()]);
+        }
+
+
+        return $this->render('sortie/annuler.html.twig', [
+            'id' => $sortie->getId(),
+            'sortie' => $sortie,
+            'formAnnuler' => $form,
+        ]);
     }
 
 }

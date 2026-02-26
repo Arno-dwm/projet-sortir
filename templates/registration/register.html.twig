@@ -3,23 +3,72 @@
 {% block title %}{{parent()}} - Inscription{% endblock %}
 
 {% block body %}
-<div class="mx-auto w-75 text-center mt-2">
+<div class="container-fluid mt-5 d-flex justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
 
-    <div class="row justify-content-center text-center  mx-auto ">
-    <h1>Créer un compte</h1>
-        <div class="col-12 col-md-6 text-start mb-5">
-
-    {{ form_errors(registrationForm) }}
+                <h2 class="text-center mb-4">Ajouter un utilisateur</h2>
 
 
-            {{ form_start(registrationForm) }}
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8">
+                        {{ form_errors(registrationForm) }}
+                        {{ form_start(registrationForm) }}
 
-            {{ form_widget(registrationForm) }}
-            <button type="submit" class="btn btn-success mx-auto d-block mt-2">Register</button>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.username) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.prenom) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.nom) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.telephone) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.mail) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.site) }}
+                            </div>
 
-            {{ form_end(registrationForm) }}
+                            <div class="col-md-6 mb-3">
+                                <p>Mot de passe</p>
+                                {{ form_widget(registrationForm.plainPassword.first) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <p>Confirmer le mot de passe</p>
+                                {{ form_widget(registrationForm.plainPassword.second) }}
+                            </div>
+
+                            <div class="w-100">
+                                <p>Photo de profil</p>
+                                {{ form_widget(registrationForm.lienImgFile) }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success flex-fill">
+                                Enregistrer
+                            </button>
+
+                            <a href="{{ path('app_home') }}" class="btn btn-secondary flex-fill">
+                                Annuler
+                            </a>
+                        </div>
+
+                        {{ form_end(registrationForm) }}
+
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-
 </div>
+
 {% endblock %}

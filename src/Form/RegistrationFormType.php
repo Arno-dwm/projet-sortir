@@ -77,7 +77,7 @@ class RegistrationFormType extends AbstractType
                 'class' => Site::class,
                 'choice_label' => 'nom',
             ])
-            ->add('imgProfil', FileType::class, [
+            ->add('lienImgFile', FileType::class, [
                 'mapped' => false,
                 'label' => 'Ma photo',
                 'required' => false,
