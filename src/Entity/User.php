@@ -87,6 +87,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participant')]
     private Collection $inscriptions;
 
+    #[ORM\Column(length: 250, nullable: true)]
+    private ?string $urlPhoto = null;
+
     #[ORM\PrePersist]
     public function setActifParDefaut(): void
     {
@@ -309,6 +312,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $inscription->setParticipant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUrlPhoto(): ?string
+    {
+        return $this->urlPhoto;
+    }
+
+    public function setUrlPhoto(?string $urlPhoto): static
+    {
+        $this->urlPhoto = $urlPhoto;
 
         return $this;
     }
