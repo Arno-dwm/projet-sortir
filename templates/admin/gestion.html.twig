@@ -31,7 +31,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for user in users %}
+                            {% for user in users |sort ((a, b) => b.roles <=> a.roles ?: a.username|lower <=> b.username|lower)%}
                                 <tr>
                                     <td>
                                         <a href="{{ path('app_user_detail', {username : user.username}) }}">{{ user.username }}</a>
@@ -42,10 +42,13 @@
                                     <td>{{ user.telephone }}</td>
 
                                     {% if user.actif == 1 %}
-                                        <td><input id="actif" type="checkbox" checked>
+                                        <td>
                                             <label for="actif">Actif</label>
+                                            {% if user.userIdentifier != app.user.userIdentifier %}
+                                                <input id="actif" type="checkbox" checked>
                                             <a href="{{ path('app_inactif', {id: user.id, _token: csrf_token('inactif' ~ user.id)}) }}"
                                                class="btn btn-outline-success btn-sm ms-lg-4">Mettre à jour</a></td>
+                                            {% endif %}
                                     {% else %}
                                         <td><input id="inactif" type="checkbox">
                                             <label for="inactif">Inactif</label>
@@ -53,10 +56,12 @@
                                                class="btn btn-outline-success btn-sm  ms-sm-0 ms-lg-3">Mettre à jour</a></td>
                                     {% endif %}
                                     {% if 'ROLE_ADMIN' in user.roles %}
-                                            <td><input id="admin" type="checkbox" checked>
-                                                <label for="admin">Admin</label>
+                                            <td><label for="admin">Admin</label>
+                                                {% if user.userIdentifier != app.user.userIdentifier %}
+                                                    <input id="admin" type="checkbox" checked>
                                                     <a href="{{ path('app_role_user', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
                                                        class="btn btn-outline-success btn-sm ms-1">Mettre à jour</a></td>
+                                                {% endif %}
                                         {% else %}
                                             <td><input id="user" type="checkbox">
                                                 <label for="user">User</label>
