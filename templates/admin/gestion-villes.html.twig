@@ -43,8 +43,9 @@
                             <td>{{ ville.codePostal }}</td>
                             <td><a href="{{ path('app_admin_villes') }}"
                                    class="btn btn-outline-secondary btn-sm  ms-sm-0 ms-lg-3">Modifier</a>
-                                <a href="{{ path('app_admin_villes') }}"
-                                   class="btn btn-outline-danger btn-sm  ms-sm-0 ms-lg-3">Supprimer</a></td>
+                                <a href="{{ path('app_ville_delete', {id: ville.id, _token: csrf_token('delete_ville' ~ ville.id)} ) }}"
+                                   class="btn btn-outline-danger btn-sm  ms-sm-0 ms-lg-3">Supprimer</a>
+                                </td>
                         {% else %}
                             <tr>
                                 <td colspan="3" class="text-center text-muted">
