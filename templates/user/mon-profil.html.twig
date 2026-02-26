@@ -3,37 +3,69 @@
 {% block title %}Mon Profil{% endblock %}
 
 {% block body %}
-    <div class="mx-auto w-75 text-center mt-2">
 
-        <div class="row justify-content-center text-center  mx-auto ">
-            <h1>Votre Profil</h1>
-            <div class="col-12 col-md-6 text-start mb-5">
-                <div class="row align-items-start">
-                    <div class="col-5">
-                        <p>Notre futur image</p>
-                    </div>
-                    <div class="col-7">
-                        {{ form_start(user_form) }}
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
 
-                        {{ form_row(user_form.username) }}
-                        {{ form_row(user_form.prenom) }}
-                        {{ form_row(user_form.nom) }}
-                        {{ form_row(user_form.telephone) }}
-                        {{ form_row(user_form.mail) }}
-                        {{ form_row(user_form.plainPassword) }}
-                        {{ form_row(user_form.site) }}
-                        {{ form_row(user_form.lienImgFile) }}
-                        <div class ="d-flex justify-content-center gap-3 mt-4">
-                            <button type="submit" class="btn btn-outline-success">Enregistrer</button>
-                            <a href="{{ path('app_home') }}" class="btn btn-outline-dark">Annuler </a>
+                    <h2 class="text-center mb-4">Votre Profil</h2>
+
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-8">
+
+                            {{ form_start(user_form) }}
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.username) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.prenom) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.nom) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.telephone) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.mail) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.site) }}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.plainPassword.first) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(user_form.plainPassword.second) }}
+                                </div>
+
+                                <div class="w-100">
+                                    {{ form_row(user_form.lienImgFile) }}
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 mt-4">
+                                <button type="submit" class="btn btn-success flex-fill">
+                                    Enregistrer
+                                </button>
+
+                                <a href="{{ path('app_home') }}" class="btn btn-secondary flex-fill">
+                                    Annuler
+                                </a>
+                            </div>
+
+                            {{ form_end(user_form) }}
+
                         </div>
-                        {{ form_end(user_form) }}
                     </div>
+
                 </div>
-
-
             </div>
         </div>
-
     </div>
+
 {% endblock %}
