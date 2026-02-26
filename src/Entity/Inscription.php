@@ -17,11 +17,11 @@ class Inscription
     #[ORM\Column]
     private ?\DateTime $dateInscription = null;
 
-    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
+    #[ORM\ManyToOne(inversedBy: 'inscriptions', fetch:'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $participant = null;
 
-    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
+    #[ORM\ManyToOne(inversedBy: 'inscriptions', fetch:'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Sortie $sortie = null;
 

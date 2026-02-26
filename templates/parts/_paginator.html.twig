@@ -1,0 +1,46 @@
+{% if totalPages > 1 %}
+    <nav>
+        <ul class="pagination">
+
+            {# Page précédente #}
+            {% if currentPage > 1 %}
+                <li class="page-item">
+                    <a href="{{ path(app.request.attributes.get('_route'),
+                        app.request.query.all | merge({'page': currentPage - 1})
+                    ) }}" class="page-link">
+                        ← Précédent
+                    </a>
+                </li>
+            {% endif %}
+
+            {# Pages numérotées #}
+            {% for i in 1..totalPages %}
+                {% if i == currentPage %}
+                    <li class="page-item">
+                        <a href="" class="page-link"><strong>{{ i }}</strong></a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a href="{{ path(app.request.attributes.get('_route'),
+                            app.request.query.all | merge({'page': i})
+                        ) }}" class="page-link">
+                            {{ i }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {# Page suivante #}
+            {% if currentPage < totalPages %}
+                <li class="page-item">
+                    <a href="{{ path(app.request.attributes.get('_route'),
+                        app.request.query.all | merge({'page': currentPage + 1})
+                    ) }}" class="page-link">
+                        Suivant →
+                    </a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+{% endif %}

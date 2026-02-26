@@ -30,6 +30,7 @@ body {
     margin-left:10px;
     margin-top:10px;
 }
+
 .card-text a{
     color:cadetblue;
     text-decoration: none;
@@ -39,6 +40,9 @@ body {
 }
 .card-visibilityOn{
 
+}
+.card-visibility50{
+    opacity:0.7;
 }
 .table-success a{
     color:cadetblue;
@@ -62,5 +66,9 @@ li>span{
 
 /* Popup aucune sortie homepage*/
 .notFound{
+    margin-left:10px;
+}
+
+.pagination{
     margin-left:10px;
 }
