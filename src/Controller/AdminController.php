@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Controller;
+
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+#[IsGranted('ROLE_ADMIN')]
+
+final class AdminController extends AbstractController
+{
+    #[Route('/admin', name: 'app_admin')]
+    public function listerUtilisateur(UserRepository $uRepo): Response
+    {
+        $users = $uRepo->findAll();
+
+        return $this->render('admin/gestion.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
+    #[Route('/roleAdmin/{id}', name: 'app_role_admin', requirements: ['id' => '\d+'])]
+    public function devenirAdmin(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $uRepo->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non reconnu');
+        }
+        $token = $request->query->get('_token');
+        if ($this->isCsrfTokenValid('role_admin' . $user->getId(), $token)) {
+
+        $user->setRoles(['ROLE_ADMIN']);
+        $em->persist($user);
+        $em->flush($user);
+
+        $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en ADMIN');
+        return $this->redirectToRoute('app_admin');
+        }
+
+        $this->addFlash('danger', "Action impossible");
+        return $this->redirectToRoute('app_home');
+    }
+    #[Route('/roleUser/{id}', name: 'app_role_user', requirements: ['id' => '\d+'])]
+    public function enleverAdmin(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $uRepo->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non reconnu');
+        }
+        $token = $request->query->get('_token');
+        if ($this->isCsrfTokenValid('role_admin' . $user->getId(), $token)) {
+
+            $user->setRoles(['ROLE_USER']);
+            $em->persist($user);
+            $em->flush($user);
+
+            $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en USER');
+            return $this->redirectToRoute('app_admin');
+        }
+
+        $this->addFlash('danger', "Action impossible");
+        return $this->redirectToRoute('app_home');
+    }
+    #[Route('/actif/{id}', name: 'app_actif', requirements: ['id' => '\d+'])]
+    public function rendreActif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $uRepo->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non reconnu');
+        }
+        $token = $request->query->get('_token');
+        if ($this->isCsrfTokenValid('actif' . $user->getId(), $token)) {
+
+            $user->setActif(true);
+            $em->persist($user);
+            $em->flush($user);
+
+            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est actif');
+            return $this->redirectToRoute('app_admin');
+        }
+
+        $this->addFlash('danger', "Action impossible");
+        return $this->redirectToRoute('app_home');
+    }
+    #[Route('/inactif/{id}', name: 'app_inactif', requirements: ['id' => '\d+'])]
+    public function rendreInactif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $uRepo->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non reconnu');
+        }
+
+        $sorties = $user->getSortiesOrganisees();
+
+        foreach ($sorties as $sortie) {
+            if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' OR $sortie->getEtat()->getCode() == 'EC') {
+                $this->addFlash('danger', 'Changement à INACTIF impossible pour ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état '. $sortie->getEtat()->getLibelle() . ')' );
+                return $this->redirectToRoute('app_admin');
+            }
+        }
+
+        $token = $request->query->get('_token');
+        if ($this->isCsrfTokenValid('inactif' . $user->getId(), $token)) {
+
+            $user->setActif(false);
+            $em->persist($user);
+            $em->flush($user);
+
+            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est inactif');
+            return $this->redirectToRoute('app_admin');
+        }
+
+        $this->addFlash('danger', "Action impossible");
+        return $this->redirectToRoute('app_home');
+    }
+}
