@@ -94,10 +94,20 @@ final class AdminController extends AbstractController
     public function rendreInactif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
         $user = $uRepo->find($id);
-        //todo vérifier si Paul a une activité à venir
+
         if (!$user) {
             throw $this->createNotFoundException('Utilisateur non reconnu');
         }
+
+        $sorties = $user->getSortiesOrganisees();
+
+        foreach ($sorties as $sortie) {
+            if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' OR $sortie->getEtat()->getCode() == 'EC') {
+                $this->addFlash('danger', 'Changement à INACTIF impossible pour ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état '. $sortie->getEtat()->getLibelle() . ')' );
+                return $this->redirectToRoute('app_admin');
+            }
+        }
+
         $token = $request->query->get('_token');
         if ($this->isCsrfTokenValid('inactif' . $user->getId(), $token)) {
 
