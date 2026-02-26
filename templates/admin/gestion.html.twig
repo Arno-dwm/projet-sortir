@@ -63,8 +63,8 @@
                                                        class="btn btn-outline-success btn-sm ms-1">Mettre à jour</a></td>
                                                 {% endif %}
                                         {% else %}
-                                            <td><input id="user" type="checkbox">
-                                                <label for="user">User</label>
+                                            <td><label for="user">User</label>
+                                                <input id="user" type="checkbox">
                                                 <a href="{{ path('app_role_admin', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
                                                    class="btn btn-outline-success btn-sm  ms-sm-0 ms-lg-3">Mettre à jour</a></td>
                                         {% endif %}
