@@ -2,7 +2,12 @@
 
 namespace App\Controller;
 
+use App\DTO\VilleFilterDTO;
+use App\Entity\Ville;
+use App\Form\VilleFilterType;
+use App\Form\VilleType;
 use App\Repository\UserRepository;
+use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,10 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
-
+#[Route('/admin', name: 'app_admin')]
 final class AdminController extends AbstractController
 {
-    #[Route('/admin', name: 'app_admin')]
+    #[Route('/gestion', name: '_gestion')]
     public function listerUtilisateur(UserRepository $uRepo): Response
     {
         $users = $uRepo->findAll();
@@ -24,7 +29,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/roleAdmin/{id}', name: 'app_role_admin', requirements: ['id' => '\d+'])]
+    #[Route('/roleAdmin/{id}', name: '_role_admin', requirements: ['id' => '\d+'])]
     public function devenirAdmin(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
         $user = $uRepo->find($id);
@@ -40,13 +45,13 @@ final class AdminController extends AbstractController
         $em->flush($user);
 
         $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en ADMIN');
-        return $this->redirectToRoute('app_admin');
+        return $this->redirectToRoute('app_admin_gestion');
         }
 
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
-    #[Route('/roleUser/{id}', name: 'app_role_user', requirements: ['id' => '\d+'])]
+    #[Route('/roleUser/{id}', name: '_role_user', requirements: ['id' => '\d+'])]
     public function enleverAdmin(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
         $user = $uRepo->find($id);
@@ -62,13 +67,13 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en USER');
-            return $this->redirectToRoute('app_admin');
+            return $this->redirectToRoute('app_admin_gestion');
         }
 
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
-    #[Route('/actif/{id}', name: 'app_actif', requirements: ['id' => '\d+'])]
+    #[Route('/actif/{id}', name: '_actif', requirements: ['id' => '\d+'])]
     public function rendreActif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
         $user = $uRepo->find($id);
@@ -84,13 +89,13 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est actif');
-            return $this->redirectToRoute('app_admin');
+            return $this->redirectToRoute('app_admin_gestion');
         }
 
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
-    #[Route('/inactif/{id}', name: 'app_inactif', requirements: ['id' => '\d+'])]
+    #[Route('/inactif/{id}', name: '_inactif', requirements: ['id' => '\d+'])]
     public function rendreInactif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
         $user = $uRepo->find($id);
@@ -104,7 +109,7 @@ final class AdminController extends AbstractController
         foreach ($sorties as $sortie) {
             if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' OR $sortie->getEtat()->getCode() == 'EC') {
                 $this->addFlash('danger', 'Changement à INACTIF impossible pour ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état '. $sortie->getEtat()->getLibelle() . ')' );
-                return $this->redirectToRoute('app_admin');
+                return $this->redirectToRoute('app_admin_gestion');
             }
         }
 
@@ -116,10 +121,42 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est inactif');
-            return $this->redirectToRoute('app_admin');
+            return $this->redirectToRoute('app_admin_gestion');
         }
 
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
+    }
+
+    #[Route('/villes', name: '_villes')]
+    public function gestionVilles(VilleRepository $villeRepo, Request $request, EntityManagerInterface $em): Response
+    {
+
+        $dto= new VilleFilterDTO();
+        $form = $this->createForm(VilleFilterType::class, $dto);
+        $form->handleRequest($request);
+
+        $villes = $form->isSubmitted() && $form->isValid()
+            ? $villeRepo->findByFilters($dto)
+            : $villeRepo->findAll();
+
+        $ville = new Ville();
+        $fomVille = $this->createForm(VilleType::class, $ville);
+        $fomVille->handleRequest($request);
+
+        if ($fomVille->isSubmitted() && $fomVille->isValid()) {
+            $em->persist($ville);
+            $em->flush($ville);
+            $this->addFlash('success', 'La ville de ' . $ville->getNom() . ' a bien été enregistrée !');
+            return $this->redirectToRoute('app_admin_villes');
+        }
+
+        return $this->render('admin/gestion-villes.html.twig', [
+            'villes' => $villes,
+            'form' => $form,
+            'form_ville' => $fomVille,
+
+
+        ]);
     }
 }

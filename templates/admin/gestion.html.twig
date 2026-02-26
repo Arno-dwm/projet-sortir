@@ -46,26 +46,27 @@
                                             <label for="actif">Actif</label>
                                             {% if user.userIdentifier != app.user.userIdentifier %}
                                                 <input id="actif" type="checkbox" checked>
-                                            <a href="{{ path('app_inactif', {id: user.id, _token: csrf_token('inactif' ~ user.id)}) }}"
+                                            <a href="{{ path('app_admin_inactif', {id: user.id, _token: csrf_token('inactif' ~ user.id)}) }}"
                                                class="btn btn-outline-success btn-sm ms-lg-4">Mettre à jour</a></td>
                                             {% endif %}
                                     {% else %}
                                         <td><input id="inactif" type="checkbox">
                                             <label for="inactif">Inactif</label>
-                                            <a href="{{ path('app_actif', {id: user.id, _token: csrf_token('actif' ~ user.id)}) }}"
+                                            <a href="{{ path('app_admin_actif', {id: user.id, _token: csrf_token('actif' ~ user.id)}) }}"
                                                class="btn btn-outline-success btn-sm  ms-sm-0 ms-lg-3">Mettre à jour</a></td>
                                     {% endif %}
                                     {% if 'ROLE_ADMIN' in user.roles %}
                                             <td><label for="admin">Admin</label>
                                                 {% if user.userIdentifier != app.user.userIdentifier %}
+                                                    {% elseif user.userIdentifier != 'admin' %}
                                                     <input id="admin" type="checkbox" checked>
-                                                    <a href="{{ path('app_role_user', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
+                                                    <a href="{{ path('app_admin_role_user', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
                                                        class="btn btn-outline-success btn-sm ms-1">Mettre à jour</a></td>
                                                 {% endif %}
                                         {% else %}
                                             <td><label for="user">User</label>
                                                 <input id="user" type="checkbox">
-                                                <a href="{{ path('app_role_admin', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
+                                                <a href="{{ path('app_admin_role_admin', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
                                                    class="btn btn-outline-success btn-sm  ms-sm-0 ms-lg-3">Mettre à jour</a></td>
                                         {% endif %}
 
