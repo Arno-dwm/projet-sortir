@@ -43,11 +43,15 @@
                                 <button type="submit" name="action" value="OUV" class="btn btn-primary flex-fill">
                                     Publier la sortie
                                 </button>
-
+                                {% if sortie.id is not null %}
                                 <a href="{{ path('app_sortie_detail', {id: sortie.id}) }}" class="btn btn-warning flex-fill">
                                     Annuler la saisie
                                 </a>
-
+                                    {% else %}
+                                        <a href="{{ path('app_home') }}" class="btn btn-warning flex-fill">
+                                            Annuler la saisie
+                                        </a>
+                                {% endif %}
                             {{ form_end(sortieForm, { render_rest: false }) }}
 
                         </div>
