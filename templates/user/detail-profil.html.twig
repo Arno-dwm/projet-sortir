@@ -3,35 +3,44 @@
 {% block title %}Détail Profil {% endblock %}
 
 {% block body %}
-    <div class="mx-auto w-75 text-center mt-2">
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
 
-        <div class="row justify-content-center text-center  mx-auto ">
-            <h1>{{ user.username }}</h1>
-            <div class="container text-start mt-2">
-                <div class="row align-items-start">
-                    <div class="col-3">
-                        <p>Notre futur image</p>
+                    <h1 class="text-center">{{ user.username }}</h1>
+
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-8">
+
+
+                            <div class="row align-items-start">
+                                <div class="col-3">
+                                    <p>Notre futur image</p>
+                                </div>
+                                <div class="col-4">
+                                    <p>Prénom : </p>
+                                    <p>Nom : </p>
+                                    <p>Téléphone : </p>
+                                    <p>Email : </p>
+                                    <p>Ville de rattachement : </p>
+                                    <a href="{{ path('app_home') }}" class="btn btn-primary mt-2">Retour</a>
+                                </div>
+                                <div class="col-5">
+                                    <p>{{ user.prenom |capitalize }}</p>
+                                    <p>{{ user.nom |capitalize }}</p>
+                                    <p>{{ user.telephone }}</p>
+                                    <p>{{ user.mail }}</p>
+                                    <p>{{ user.site.getNom }}</p>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                    <div class="col-4">
-                        <p>Prénom : </p>
-                        <p>Nom : </p>
-                        <p>Téléphone : </p>
-                        <p>Email : </p>
-                        <p>Ville de rattachement : </p>
-                        <a href="{{ path('app_home') }}" class="btn btn-primary mt-2">Retour</a>
-                    </div>
-                    <div class="col-5">
-                        <p>{{ user.prenom |capitalize }}</p>
-                        <p>{{ user.nom |capitalize }}</p>
-                        <p>{{ user.telephone }}</p>
-                        <p>{{ user.mail }}</p>
-                        <p>{{ user.site.getNom }}</p>
-                    </div>
+
                 </div>
-
-
             </div>
         </div>
-
     </div>
+
 {% endblock %}
