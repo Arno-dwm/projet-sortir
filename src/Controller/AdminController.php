@@ -2,7 +2,12 @@
 
 namespace App\Controller;
 
+use App\DTO\VilleFilterDTO;
+use App\Entity\Ville;
+use App\Form\VilleFilterType;
+use App\Form\VilleType;
 use App\Repository\UserRepository;
+use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -121,5 +126,37 @@ final class AdminController extends AbstractController
 
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
+    }
+
+    #[Route('/villes', name: '_villes')]
+    public function gestionVilles(VilleRepository $villeRepo, Request $request, EntityManagerInterface $em): Response
+    {
+
+        $dto= new VilleFilterDTO();
+        $form = $this->createForm(VilleFilterType::class, $dto);
+        $form->handleRequest($request);
+
+        $villes = $form->isSubmitted() && $form->isValid()
+            ? $villeRepo->findByFilters($dto)
+            : $villeRepo->findAll();
+
+        $ville = new Ville();
+        $fomVille = $this->createForm(VilleType::class, $ville);
+        $fomVille->handleRequest($request);
+
+        if ($fomVille->isSubmitted() && $fomVille->isValid()) {
+            $em->persist($ville);
+            $em->flush($ville);
+            $this->addFlash('success', 'La ville de ' . $ville->getNom() . ' a bien été enregistrée !');
+            return $this->redirectToRoute('app_admin_villes');
+        }
+
+        return $this->render('admin/gestion-villes.html.twig', [
+            'villes' => $villes,
+            'form' => $form,
+            'form_ville' => $fomVille,
+
+
+        ]);
     }
 }
