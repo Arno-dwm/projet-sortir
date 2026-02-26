@@ -78,7 +78,7 @@ class RegistrationFormType extends AbstractType
                 'choice_label' => 'nom',
             ])
             ->add('lienImgFile', FileType::class, [
-                'mapped' => false, // car le champs 'lienImgFile n'est pas dans Wish c'est lienImg
+                'mapped' => false,
                 'label' => 'Ma photo',
                 'required' => false,
                 'constraints' => [
