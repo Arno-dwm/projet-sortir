@@ -8,9 +8,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
+                    {% if is_granted(('IS_AUTHENTICATED')) %}
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">Accueil</a>
                     </li>
+                    {% endif %}
                     {% if is_granted(('ROLE_ADMIN')) %}
                         <li class="nav-item">
                             <a class="nav-link" href="#">Villes</a>
