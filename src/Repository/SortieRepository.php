@@ -27,7 +27,18 @@ class SortieRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s')
             ->join('s.organisateur', 'o')
             ->join('s.inscriptions', 'i')
-            ->orderBy('s.dateHeureDebut', 'ASC');
+            ->leftJoin('s.etat', 'e')
+            ->addSelect('e')
+            ->addSelect("
+                    CASE
+                        WHEN e.code = 'CRE' THEN 1
+                        WHEN e.code = 'OUV' THEN 2
+                        WHEN e.code = 'FIN' THEN 3
+                        ELSE 4
+                    END AS HIDDEN ordreEtat
+                ")
+            ->orderBy('ordreEtat', 'ASC')
+            ->addOrderBy('s.dateHeureDebut', 'ASC');
         ;
 
         if (!empty($filters->site)) {
@@ -82,8 +93,8 @@ class SortieRepository extends ServiceEntityRepository
             ->addSelect('o')
             ->leftJoin('s.lieu', 'l')
             ->addSelect('l')
-            ->andWhere('e in (:etatsVisibles)')
-            ->setParameter('etatsVisibles', [1,2,5,6])
+            ->andWhere('e.code in (:etatsVisibles)')
+            ->setParameter('etatsVisibles', ['CRE','OUV','FIN','EC'])
             ->orderBy('s.dateHeureDebut', 'ASC');
         return $qb->getQuery()->getResult();
     }
@@ -95,11 +106,21 @@ class SortieRepository extends ServiceEntityRepository
             ->addSelect('e')
             ->leftJoin('s.organisateur', 'o')
             ->addSelect('o')
+            ->addSelect("
+                    CASE
+                        WHEN e.code = 'CRE' THEN 1
+                        WHEN e.code = 'OUV' THEN 2
+                        WHEN e.code = 'FIN' THEN 3
+                        ELSE 4
+                    END AS HIDDEN ordreEtat
+                ")
             ->leftJoin('s.lieu', 'l')
             ->addSelect('l')
-            ->andWhere('e in (:etatsVisibles)')
-            ->setParameter('etatsVisibles', [1,2,5,6])
-            ->orderBy('s.dateHeureDebut', 'ASC');
+            ->andWhere('e.code in (:etatsVisibles)')
+            ->setParameter('etatsVisibles', ['CRE','OUV','FIN','EC'])
+            ->orderBy('ordreEtat', 'ASC')
+            ->addOrderBy('s.dateHeureDebut', 'ASC');
+
     }
     //    /**
     //     * @return Sortie[] Returns an array of Sortie objects
