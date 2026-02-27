@@ -12,12 +12,25 @@
                     <h1 class="text-center mb-4">Gestion des Villes</h1>
 
                     <h2>Filtrer les sorties</h2>
-                    {{ form(form) }}
-                    <div class="form-container">
-                        <div>
-                        </div>
-                </div>
 
+                        {{ form(form) }}
+                    <div class="mt-2 mb-2">
+                        {% if nb_pages_max > 1 %}
+                            {% if (page > 1) %}
+                                <a href="{{ path('app_admin_gestion', {page : page - 1}) }}" class="btn btn-outline-dark btn-sm ">Page précédente</a>
+                            {% else %}
+                                <a  class="btn btn-outline-dark btn-sm opacity-25 pe-none">Page précédente</a>
+                            {% endif %}
+
+
+                            {% if (page < nb_pages_max) %}
+                                <a href="{{ path('app_admin_gestion', {page : page + 1}) }}" class="btn btn-outline-dark btn-sm">Page Suivante</a>
+                            {% else %}
+                                <a class="btn btn-outline-dark btn-sm opacity-25 pe-none">Page Suivante</a>
+                            {% endif %}
+                        {% endif %}
+
+                    </div>
 
 
                 <div class="table-responsive">
@@ -53,7 +66,7 @@
                             {{ form_start(form_ville) }}
                         <td>{{ form_widget(form_ville.nom) }} {{ form_errors(form_ville.nom) }}</td>
                         <td>{{ form_widget(form_ville.codePostal) }}</td>
-                        <td><button type="submit" class="btn btn-primary">
+                        <td><button type="submit" class="btn btn-success">
                                 Enregistrer
                             </button></td>
                             {{ form_end(form_ville) }}
