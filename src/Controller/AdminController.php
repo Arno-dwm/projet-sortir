@@ -3,15 +3,18 @@
 namespace App\Controller;
 
 use App\DTO\VilleFilterDTO;
+use App\Entity\User;
 use App\Entity\Ville;
 use App\Form\VilleFilterType;
 use App\Form\VilleType;
+use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -120,6 +123,7 @@ final class AdminController extends AbstractController
 
         $sorties = $user->getSortiesOrganisees();
 
+        // Verifier si une sortie avec l'état Inscrption ouverte ou inscription cloturé existe
         foreach ($sorties as $sortie) {
             if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' OR $sortie->getEtat()->getCode() == 'EC') {
                 $this->addFlash('danger', 'Changement à INACTIF impossible pour ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état '. $sortie->getEtat()->getLibelle() . ')' );
@@ -141,6 +145,80 @@ final class AdminController extends AbstractController
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
+
+    #[Route('/supprimer/{id}', name: '_supprimer', requirements: ['id' => '\d+'])]
+    public function supprimerUtilisateur(UserRepository $uRepo,UserPasswordHasherInterface $userPasswordHasher, SiteRepository $sRepo , int $id, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $uRepo->find($id);
+
+        $userDefault = $uRepo->findOneBy(['username' => 'user_default']);
+
+
+        // TODO à refactor dans une methode dans le dossier helper
+        if(!$userDefault) {
+            $site = $sRepo->find(1);
+            $userDefault = New User();
+            $userDefault->setUsername('user_default');
+            $userDefault->setRoles(['ROLE_USER']);
+            $userDefault->setActif(false);
+            // il faudrait créer une adresse mail "poubelle"
+            $userDefault->setMail('utilisateur@mail.com');
+            $userDefault->setNom('utilisateur');
+            $userDefault->setPrenom('utilisateur');
+            $userDefault->setPassword($userPasswordHasher->hashPassword($user, '1234'));
+            $userDefault->setSite($site);
+            $em->persist($userDefault);
+            $em->flush($userDefault);
+        }
+
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non reconnu');
+        }
+
+        $sorties = $user->getSortiesOrganisees();
+
+        // Verifier si une sortie avec l'état Inscrption ouverte ou inscription cloturé existe
+        foreach ($sorties as $sortie) {
+            if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' or $sortie->getEtat()->getCode() == 'EC') {
+                $this->addFlash('danger', 'Impossible de supprimer ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état '. $sortie->getEtat()->getLibelle() . ')' );
+                return $this->redirectToRoute('app_admin_gestion');
+            }
+        }
+
+
+        $token = $request->query->get('_token');
+        if ($this->isCsrfTokenValid('supprimer' . $user->getId(), $token)) {
+
+            // AVANT SUPRESSION
+            // On assigne un utilisateur par défaut pour chaque sortie qu'il a organisé
+            foreach ($sorties as $sortieOrganisee) {
+                $sortieOrganisee->setOrganisateur($userDefault);
+                $em->persist($sortieOrganisee);
+                $em->flush($sortieOrganisee);
+            }
+
+            $inscriptions = $user->getInscriptions();
+
+            // AVANT SUPRESSION
+            // On assigne un utilisateur par défaut pour chacune de ses inscriptions
+            foreach ($inscriptions as $inscription) {
+                $inscription->setParticipant($userDefault);
+                $em->persist($inscription);
+                $em->flush($inscription);
+            }
+
+            $em->remove($user);
+            $em->flush($user);
+
+            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' a été remplacé par défault puis supprimer');
+            return $this->redirectToRoute('app_admin_gestion');
+        }
+
+        $this->addFlash('danger', "Action impossible");
+        return $this->redirectToRoute('app_home');
+    }
+
 
     #[Route('/villes/{page}', name: '_villes', requirements: ['id' => '\d+'])]
     public function gestionVilles(VilleRepository $villeRepo, Request $request, EntityManagerInterface $em, int $page = 1): Response
