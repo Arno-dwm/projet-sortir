@@ -17,14 +17,14 @@
                     <div class="mt-2 mb-2">
                         {% if nb_pages_max > 1 %}
                             {% if (page > 1) %}
-                                <a href="{{ path('app_admin_gestion', {page : page - 1}) }}" class="btn btn-outline-dark btn-sm ">Page précédente</a>
+                                <a href="{{ path('app_admin_villes', {page : page - 1}) }}" class="btn btn-outline-dark btn-sm ">Page précédente</a>
                             {% else %}
                                 <a  class="btn btn-outline-dark btn-sm opacity-25 pe-none">Page précédente</a>
                             {% endif %}
 
 
                             {% if (page < nb_pages_max) %}
-                                <a href="{{ path('app_admin_gestion', {page : page + 1}) }}" class="btn btn-outline-dark btn-sm">Page Suivante</a>
+                                <a href="{{ path('app_admin_villes', {page : page + 1}) }}" class="btn btn-outline-dark btn-sm">Page Suivante</a>
                             {% else %}
                                 <a class="btn btn-outline-dark btn-sm opacity-25 pe-none">Page Suivante</a>
                             {% endif %}
