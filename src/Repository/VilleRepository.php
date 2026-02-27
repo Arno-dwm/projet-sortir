@@ -17,17 +17,40 @@ class VilleRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Ville::class);
+
     }
-    public function findByFilters(VilleFilterDTO $filters): array
+    public function findByFilters(VilleFilterDTO $filters,int $limit, int $offset): array
     {
-        $qb = $this->createQueryBuilder('ville');
+        $query = $this->createQueryBuilder('ville');
 
         if ($filters->inputSearch) {
-            $qb->andWhere('ville.nom LIKE :search')
+            $query->andWhere('ville.nom LIKE :search')
                 ->setParameter('search', '%'.$filters->inputSearch.'%');
         }
+        $query2 = clone $query;
+        $query2->select('COUNT(ville.id)');
 
-        return $qb->getQuery()->getResult();
+        return  [
+            $query2->getQuery()->getSingleScalarResult(),
+            $query->setFirstResult($offset)
+                ->setMaxResults($limit)
+                ->getQuery()->getResult()
+        ];
+    }
+
+    public function findVilleOrderByNom(int $limit, int $offset): array {
+        $query = $this->createQueryBuilder('v')
+            ->orderBy('v.nom', 'ASC');
+
+        $query2 = clone $query;
+        $query2->select('COUNT(v.id)');
+
+        return [
+            $query2->getQuery()->getSingleScalarResult(),
+            $query->setFirstResult($offset)
+                ->setMaxResults($limit)
+                ->getQuery()->getResult()
+        ];
     }
 
     //    /**

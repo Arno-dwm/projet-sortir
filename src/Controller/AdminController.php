@@ -142,17 +142,23 @@ final class AdminController extends AbstractController
         return $this->redirectToRoute('app_home');
     }
 
-    #[Route('/villes', name: '_villes')]
-    public function gestionVilles(VilleRepository $villeRepo, Request $request, EntityManagerInterface $em): Response
+    #[Route('/villes/{page}', name: '_villes', requirements: ['id' => '\d+'])]
+    public function gestionVilles(VilleRepository $villeRepo, Request $request, EntityManagerInterface $em, int $page = 1): Response
     {
+        $limit = 10;
+        $page = max($page,1);
+        $offset = ($page-1)*$limit;
+
 
         $dto= new VilleFilterDTO();
         $form = $this->createForm(VilleFilterType::class, $dto);
         $form->handleRequest($request);
 
-        $villes = $form->isSubmitted() && $form->isValid()
-            ? $villeRepo->findByFilters($dto)
-            : $villeRepo->findAll();
+        list($nbTotal,$villes)  = $form->isSubmitted() && $form->isValid()
+            ?  $villeRepo->findByFilters($dto, $limit, $offset)
+            :  $villeRepo->findVilleOrderByNom($limit, $offset);
+
+        $nbPagesMax = ceil($nbTotal / $limit);
 
         $ville = new Ville();
         $fomVille = $this->createForm(VilleType::class, $ville);
@@ -169,6 +175,8 @@ final class AdminController extends AbstractController
             'villes' => $villes,
             'form' => $form,
             'form_ville' => $fomVille,
+            'page' => $page,
+            'nb_pages_max' => $nbPagesMax,
 
 
         ]);
