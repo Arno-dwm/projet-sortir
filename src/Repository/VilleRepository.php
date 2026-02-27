@@ -2,6 +2,9 @@
 
 namespace App\Repository;
 
+use App\DTO\SortieFilterDTO;
+
+use App\DTO\VilleFilterDTO;
 use App\Entity\Ville;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,6 +17,17 @@ class VilleRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Ville::class);
+    }
+    public function findByFilters(VilleFilterDTO $filters): array
+    {
+        $qb = $this->createQueryBuilder('ville');
+
+        if ($filters->inputSearch) {
+            $qb->andWhere('ville.nom LIKE :search')
+                ->setParameter('search', '%'.$filters->inputSearch.'%');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     //    /**

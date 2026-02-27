@@ -118,9 +118,12 @@ class SortieType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Sortie::class,
+            'method' => 'GET',
+            'csrf_protection' => false,
             'user' => null,
         ]);
 
         $resolver->setAllowedTypes('user', ['null', User::class]);
     }
+
 }

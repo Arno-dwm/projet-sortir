@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - Gestion{% endblock %}
+{% block body %}
+
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+
+                <div class="card-body p-5">
+
+                    <h1 class="text-center mb-4">Gestion des Villes</h1>
+
+                    <h2>Filtrer les sorties</h2>
+                    {{ form(form) }}
+                    <div class="form-container">
+                        <div>
+                        </div>
+                </div>
+
+
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped border">
+
+                        <thead class="table-light">
+                        <tr>
+                            <th>Ville</th>
+                            <th>Code Postal</th>
+                            <th>Action</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ville in villes |sort ((a, b) =>  a.nom|capitalize <=> b.nom|capitalize) %}
+                            <tr>
+
+                            <td>{{ ville.nom|capitalize }}</td>
+                            <td>{{ ville.codePostal }}</td>
+                            <td><a href="{{ path('app_admin_villes') }}"
+                                   class="btn btn-outline-secondary btn-sm  ms-sm-0 ms-lg-3">Modifier</a>
+                                <a href="{{ path('app_ville_delete', {id: ville.id, _token: csrf_token('delete_ville' ~ ville.id)} ) }}"
+                                   class="btn btn-outline-danger btn-sm  ms-sm-0 ms-lg-3">Supprimer</a>
+                                </td>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">
+                                    Aucun ville pour le moment.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            {{ form_start(form_ville) }}
+                        <td>{{ form_widget(form_ville.nom) }} {{ form_errors(form_ville.nom) }}</td>
+                        <td>{{ form_widget(form_ville.codePostal) }}</td>
+                        <td><button type="submit" class="btn btn-primary">
+                                Enregistrer
+                            </button></td>
+                            {{ form_end(form_ville) }}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+{% endblock %}
