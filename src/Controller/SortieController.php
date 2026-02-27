@@ -18,7 +18,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/sortie', name: 'app_sortie')]
-#[IsGranted('IS_AUTHENTICATED')]
 final class SortieController extends AbstractController
 {
     #[Route('/create', name: '_create')]
