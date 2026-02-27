@@ -24,7 +24,7 @@ class InscriptionRepository extends ServiceEntityRepository
             ->andWhere('i.participant = :user')
             ->setParameter('user', $user)
             ->getQuery()
-            ->getScalarResult();
+            ->getResult();
     }
     //    /**
     //     * @return Inscription[] Returns an array of Inscription objects

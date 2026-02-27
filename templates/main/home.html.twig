@@ -36,13 +36,14 @@
     {{ form_end(form) }}
     <section class="sorties-list">
         {% for sortie in sorties %}
+
             {% if sortie.etat.code == 'CRE' and sortie.organisateur.username == app.user.username %}
                 {% set classVisible="card card-visibilityOn" %}
                 {% elseif sortie.etat.code == 'CRE' and not (sortie.organisateur.username == app.user.username) %}
                     {% set classVisible="card card-visibilityOff" %}
-                {% elseif sortie.etat.code == 'ANN' %}
-                    {% set classVisible="card card-visibilityOff" %}
-                    {% else %}
+                {% elseif sortie.etat.code == 'FIN' %}
+                    {% set classVisible="card card-visibility50" %}
+                {% else %}
                     {% set classVisible="card card-visibilityOn" %}
             {% endif %}
                 <div class="{{ classVisible }}" style="width: 18rem;">
@@ -56,11 +57,8 @@
                         {% if sortie.id in inscriptions %}
                             <span class="badge text-bg-success">Inscrit</span>
                         {% endif %}
-                        {# if granted à enlever si home limitée aux user connectés #}
-                        {% if is_granted(('IS_AUTHENTICATED')) %}
-                            {% if sortie.organisateur.username == app.user.username %}
-                                <span class="badge text-bg-info">Organisateur</span>
-                            {% endif %}
+                        {% if sortie.organisateur.username == app.user.username %}
+                            <span class="badge text-bg-info">Organisateur</span>
                         {% endif %}
                     </div>
                     <ul class="list-group list-group-flush">
@@ -97,6 +95,8 @@
 
 
     </section>
+    {# Pagination #}
+    {% include '/parts/_paginator.html.twig' %}
 
 
 

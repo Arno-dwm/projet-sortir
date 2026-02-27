@@ -21,14 +21,17 @@ class SortieRepository extends ServiceEntityRepository
     }
 
 
-    public function findByFilters(SortieFilterDTO $filters, User $user): array
+    public function findByFilters(SortieFilterDTO $filters, User $user)
     {
 
-        $qb = $this->createQueryBuilder('s');
+        $qb = $this->createQueryBuilder('s')
+            ->join('s.organisateur', 'o')
+            ->join('s.inscriptions', 'i')
+            ->orderBy('s.dateHeureDebut', 'ASC');
+        ;
 
         if (!empty($filters->site)) {
-            $qb->join('s.organisateur', 'o')
-                ->andWhere('o.site = :site')
+            $qb->andWhere('o.site = :site')
                 ->setParameter('site', $filters->site);
         }
 
@@ -41,8 +44,7 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('user', $user->getId());
         }
         if ($filters->isInscrit) {
-            $qb->join('s.inscriptions', 'i')
-                ->andWhere('i.participant = :user')
+            $qb->andWhere('i.participant = :user')
                 ->setParameter('user', $user);
         }
         if ($filters->isNotInscrit && $user) {
@@ -68,7 +70,36 @@ class SortieRepository extends ServiceEntityRepository
 
 
 
+       // return $qb->getQuery()->getResult();
+        return $qb;
+    }
+
+    public function findAllNotCanceled(){
+        $qb = $this->createQueryBuilder('s');
+        $qb  ->leftJoin('s.etat', 'e')
+            ->addSelect('e')
+            ->leftJoin('s.organisateur', 'o')
+            ->addSelect('o')
+            ->leftJoin('s.lieu', 'l')
+            ->addSelect('l')
+            ->andWhere('e in (:etatsVisibles)')
+            ->setParameter('etatsVisibles', [1,2,5,6])
+            ->orderBy('s.dateHeureDebut', 'ASC');
         return $qb->getQuery()->getResult();
+    }
+
+    //Fonction pour tester pagination
+    public function findAllNotCanceledPagin(){
+        return $this->createQueryBuilder('s')
+          ->leftJoin('s.etat', 'e')
+            ->addSelect('e')
+            ->leftJoin('s.organisateur', 'o')
+            ->addSelect('o')
+            ->leftJoin('s.lieu', 'l')
+            ->addSelect('l')
+            ->andWhere('e in (:etatsVisibles)')
+            ->setParameter('etatsVisibles', [1,2,5,6])
+            ->orderBy('s.dateHeureDebut', 'ASC');
     }
     //    /**
     //     * @return Sortie[] Returns an array of Sortie objects
