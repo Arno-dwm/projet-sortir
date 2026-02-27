@@ -36,6 +36,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findUsersOrderByRole(int $limit, int $offset): array {
+        $query = $this->createQueryBuilder('u')
+            ->orderBy('u.roles', 'ASC');
+
+        $query2 = clone $query;
+        $query2->select('COUNT(u.id)');
+
+        return [
+            $query2->getQuery()->getSingleScalarResult(),
+            $query->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()->getResult()
+            ];
+    }
+
 
     //    /**
     //     * @return User[] Returns an array of User objects

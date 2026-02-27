@@ -14,8 +14,20 @@
 
 
                     <h2 class="text-center mb-4">Gestion des participants</h2>
+                    <div class="mb-2">
+                        {% if (page > 1) %}
+                            <a href="{{ path('app_admin_gestion', {page : page - 1}) }}" class="btn btn-outline-dark btn-sm ">Page précédente</a>
+                            {% else %}
+                                <a  class="btn btn-outline-dark btn-sm opacity-25 pe-none">Page précédente</a>
+                        {% endif %}
 
 
+                        {% if (page < nb_pages_max) %}
+                            <a href="{{ path('app_admin_gestion', {page : page + 1}) }}" class="btn btn-outline-dark btn-sm">Page Suivante</a>
+                        {% else %}
+                            <a class="btn btn-outline-dark btn-sm opacity-25 pe-none">Page Suivante</a>
+                        {% endif %}
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-hover table-striped border">
 
@@ -32,7 +44,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for user in users |sort ((a, b) => b.roles <=> a.roles ?: a.username|lower <=> b.username|lower)%}
+                            {% for user in users%}
                                 <tr>
                                     <td>
                                         <a href="{{ path('app_user_detail', {username : user.username}) }}">{{ user.username }}</a>
@@ -83,6 +95,7 @@
                             {% endfor %}
                             </tbody>
                         </table>
+
                     </div>
                 </div>
 
