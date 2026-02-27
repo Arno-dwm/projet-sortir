@@ -75,8 +75,10 @@
                                 <a href="{{ path('app_sortie_desinscription', {id : sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}" class="btn btn-outline-danger">Se désister</a>
 
                                 {% endif %}
-                                {% else %}
-                                <a href="{{ path('app_sortie_inscription', {id: sortie.id, _token: csrf_token('inscription_create' ~ sortie.id)}) }}" class="btn btn-outline-success">S'inscrire</a>
+                                {% elseif not(sortie.etat.code in ['ANN', 'FIN']) %}
+                                    <a href="{{ path('app_sortie_inscription', {id: sortie.id, _token: csrf_token('inscription_create' ~ sortie.id)}) }}" class="btn btn-outline-success">S'inscrire</a>
+                                    {% else %}
+
                             {% endif %}
                             {% if sortie.organisateur.username == app.user.username %}
                                 {% if sortie.etat.code == 'CRE' %}
