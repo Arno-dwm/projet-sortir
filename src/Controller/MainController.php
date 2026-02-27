@@ -26,7 +26,7 @@ final class MainController extends AbstractController
 
         //Pour pagination
         $page = max(1, $request->query->getInt('page', 1));
-        $limit = 6;
+        $limit = 10;
 
         //$sorties récupère le resultat
         //$qb récupère la requete
