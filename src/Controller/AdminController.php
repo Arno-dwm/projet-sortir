@@ -19,13 +19,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin', name: 'app_admin')]
 final class AdminController extends AbstractController
 {
-    #[Route('/gestion', name: '_gestion')]
-    public function listerUtilisateur(UserRepository $uRepo): Response
+    #[Route('/gestion/{page}', name: '_gestion', requirements:['page'=>'\d+'])]
+    public function listerUtilisateur(UserRepository $uRepo, int $page = 1): Response
     {
-        $users = $uRepo->findAll();
+        $limit = 10;
+        $page = max($page,1);
+        $offset = ($page-1)*$limit;
+
+        list($nbTotal,$users) = $uRepo->findUsersOrderByRole($limit,$offset);
+
+        $nbPagesMax = ceil($nbTotal / $limit);
+
+
+        if ($page > $nbPagesMax) {
+            throw $this->createNotFoundException("La page $page n'existe pas.");
+        }
+
 
         return $this->render('admin/gestion-utilisateur.html.twig', [
             'users' => $users,
+            'page' => $page,
+            'nb_pages_max' => $nbPagesMax,
         ]);
     }
 
