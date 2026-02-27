@@ -3,20 +3,25 @@ body {
 }
 
 /* Homepage */
+form{
+
+}
 .form-container{
     display:flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+    justify-content:flex-start;
     background-color: whitesmoke;
+    align-items: center;
     border-radius:6px;
     width:70vw;
     margin-left:10px;
     max-width: 100%;
 }
-
+.form-container-child{
+    flex: 1 1 auto;
+}
 .form-container div{
-    margin:10px;
+    margin:8px;
     min-width: 0;
 
 }
