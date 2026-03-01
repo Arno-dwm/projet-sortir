@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des sites{% endblock %}
+
+{% block body %}
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 p-4">
+
+                <h1 class="text-center">Gestion des sites</h1>
+
+
+                <h3>Filtrer les sites</h3>
+                {{ form_start(form_filter) }}
+                {{ form_widget(form_filter) }}
+                {{ form_end(form_filter) }}
+
+
+                <h3 class="mt-4">Liste des sites</h3>
+                <table class="table table-striped w-75 mx-auto table-bordered justify-content-center">
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for site in sites %}
+                        <tr>
+                            <td>{{ site.nom }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <form method="post" action="{{ path('app_site_delete', {'id': site.id}) }}"
+                                          onsubmit="return confirm('Voulez-vous vraiment supprimer ce site ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_site' ~ site.id) }}">
+                                        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+
+                                    </form>
+                                    <a href="{{ path('app_admin_sites', {'id': site.id}) }}"
+                                       class="btn btn-warning btn-sm">
+                                        Modifier
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="2">Aucun site trouvé</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <h3 class="mt-5">{{ edit_mode ? 'Modifier ce site' : 'Ajouter un site' }}</h3>
+                {{ form_start(form_site) }}
+                {{ form_widget(form_site) }}
+                <button type="submit" class="btn btn-success mt-2">
+                    {{ edit_mode ? 'Modifier ce site' : 'Ajouter un site' }}
+                </button>
+                {{ form_end(form_site) }}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
