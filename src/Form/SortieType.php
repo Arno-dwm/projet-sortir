@@ -36,6 +36,9 @@ class SortieType extends AbstractType
             ->add('dateHeureDebut', DateTimeType::class, [
                 'label' => 'Date et Heure de la sortie',
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d\TH:i')
+                ]
             ])
             ->add('ville', ChoiceType::class, [
                 'label' => 'Ville',
@@ -48,6 +51,9 @@ class SortieType extends AbstractType
             ->add('dateLimiteInscription', DateType::class, [
                 'label' => 'Date limite d\'inscription',
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d')
+                ]
             ])
             ->add('lieu', EntityType::class, [
                 'class' => Lieu::class,
