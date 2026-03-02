@@ -3,9 +3,7 @@
 namespace App\Repository;
 
 use App\DTO\SiteFilterDTO;
-use App\DTO\VilleFilterDTO;
 use App\Entity\Site;
-use App\Entity\Ville;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -26,8 +24,15 @@ class SiteRepository extends ServiceEntityRepository
             $qb->andWhere('site.nom LIKE :search')
                 ->setParameter('search', '%'.$filters->inputSearch.'%');
         }
-
+        $qb->orderBy('site.nom', 'ASC');
         return $qb->getQuery()->getResult();
+    }
+    public function findSiteOrderByNom(): array
+    {
+        return $this->createQueryBuilder('site')
+            ->orderBy('site.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
     //    /**
     //     * @return Site[] Returns an array of Site objects
