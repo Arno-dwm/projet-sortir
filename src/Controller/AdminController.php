@@ -26,14 +26,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin', name: 'app_admin')]
 final class AdminController extends AbstractController
 {
-    #[Route('/gestion/{page}', name: '_gestion', requirements:['page'=>'\d+'])]
+    #[Route('/gestion/{page}', name: '_gestion', requirements: ['page' => '\d+'])]
     public function listerUtilisateur(UserRepository $uRepo, int $page = 1): Response
     {
         $limit = 10;
-        $page = max($page,1);
-        $offset = ($page-1)*$limit;
+        $page = max($page, 1);
+        $offset = ($page - 1) * $limit;
 
-        list($nbTotal,$users) = $uRepo->findUsersOrderByRole($limit,$offset);
+        list($nbTotal, $users) = $uRepo->findUsersOrderByRole($limit, $offset);
 
         $nbPagesMax = ceil($nbTotal / $limit);
 
@@ -61,17 +61,18 @@ final class AdminController extends AbstractController
         $token = $request->query->get('_token');
         if ($this->isCsrfTokenValid('role_admin' . $user->getId(), $token)) {
 
-        $user->setRoles(['ROLE_ADMIN']);
-        $em->persist($user);
-        $em->flush($user);
+            $user->setRoles(['ROLE_ADMIN']);
+            $em->persist($user);
+            $em->flush($user);
 
-        $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en ADMIN');
-        return $this->redirectToRoute('app_admin_gestion');
+            $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en ADMIN');
+            return $this->redirectToRoute('app_admin_gestion');
         }
 
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
+
     #[Route('/roleUser/{id}', name: '_role_user', requirements: ['id' => '\d+'])]
     public function enleverAdmin(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
@@ -94,6 +95,7 @@ final class AdminController extends AbstractController
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
+
     #[Route('/actif/{id}', name: '_actif', requirements: ['id' => '\d+'])]
     public function rendreActif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
@@ -116,6 +118,7 @@ final class AdminController extends AbstractController
         $this->addFlash('danger', "Action impossible");
         return $this->redirectToRoute('app_home');
     }
+
     #[Route('/inactif/{id}', name: '_inactif', requirements: ['id' => '\d+'])]
     public function rendreInactif(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
@@ -129,8 +132,8 @@ final class AdminController extends AbstractController
 
         // Verifier si une sortie avec l'état Inscrption ouverte ou inscription cloturé existe
         foreach ($sorties as $sortie) {
-            if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' OR $sortie->getEtat()->getCode() == 'EC') {
-                $this->addFlash('danger', 'Changement à INACTIF impossible pour ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état '. $sortie->getEtat()->getLibelle() . ')' );
+            if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' or $sortie->getEtat()->getCode() == 'EC') {
+                $this->addFlash('danger', 'Changement à INACTIF impossible pour ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état ' . $sortie->getEtat()->getLibelle() . ')');
                 return $this->redirectToRoute('app_admin_gestion');
             }
         }
@@ -151,7 +154,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/supprimer/{id}', name: '_supprimer', requirements: ['id' => '\d+'])]
-    public function supprimerUtilisateur(UserRepository $uRepo,UserPasswordHasherInterface $userPasswordHasher, SiteRepository $sRepo , int $id, EntityManagerInterface $em, Request $request): Response
+    public function supprimerUtilisateur(UserRepository $uRepo, UserPasswordHasherInterface $userPasswordHasher, SiteRepository $sRepo, int $id, EntityManagerInterface $em, Request $request): Response
     {
         $user = $uRepo->find($id);
 
@@ -159,9 +162,9 @@ final class AdminController extends AbstractController
 
 
         // TODO à refactor dans une methode dans le dossier helper
-        if(!$userDefault) {
+        if (!$userDefault) {
             $site = $sRepo->find(1);
-            $userDefault = New User();
+            $userDefault = new User();
             $userDefault->setUsername('user_default');
             $userDefault->setRoles(['ROLE_USER']);
             $userDefault->setActif(false);
@@ -185,7 +188,7 @@ final class AdminController extends AbstractController
         // Verifier si une sortie avec l'état Inscrption ouverte ou inscription cloturé existe
         foreach ($sorties as $sortie) {
             if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' or $sortie->getEtat()->getCode() == 'EC') {
-                $this->addFlash('danger', 'Impossible de supprimer ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état '. $sortie->getEtat()->getLibelle() . ')' );
+                $this->addFlash('danger', 'Impossible de supprimer ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état ' . $sortie->getEtat()->getLibelle() . ')');
                 return $this->redirectToRoute('app_admin_gestion');
             }
         }
@@ -228,17 +231,17 @@ final class AdminController extends AbstractController
     public function gestionVilles(VilleRepository $villeRepo, Request $request, EntityManagerInterface $em, int $page = 1): Response
     {
         $limit = 10;
-        $page = max($page,1);
-        $offset = ($page-1)*$limit;
+        $page = max($page, 1);
+        $offset = ($page - 1) * $limit;
 
 
-        $dto= new VilleFilterDTO();
+        $dto = new VilleFilterDTO();
         $form = $this->createForm(VilleFilterType::class, $dto);
         $form->handleRequest($request);
 
-        list($nbTotal,$villes)  = $form->isSubmitted() && $form->isValid()
-            ?  $villeRepo->findByFilters($dto, $limit, $offset)
-            :  $villeRepo->findVilleOrderByNom($limit, $offset);
+        list($nbTotal, $villes) = $form->isSubmitted() && $form->isValid()
+            ? $villeRepo->findByFilters($dto, $limit, $offset)
+            : $villeRepo->findVilleOrderByNom($limit, $offset);
 
         $nbPagesMax = ceil($nbTotal / $limit);
 
@@ -263,12 +266,13 @@ final class AdminController extends AbstractController
 
         ]);
     }
+
     #[Route('/sites/{id?0}', name: '_sites', requirements: ['id' => '\d+'])]
     public function gestionSites(
-        SiteRepository $siteRepo,
-        Request $request,
+        SiteRepository         $siteRepo,
+        Request                $request,
         EntityManagerInterface $em,
-        Site $site = null
+        Site                   $site = null
     ): Response
     {
 
@@ -282,7 +286,8 @@ final class AdminController extends AbstractController
 
         $sites = ($formFilter->isSubmitted() && $formFilter->isValid())
             ? $siteRepo->findByFilters($dto)
-            : $siteRepo->findAll();
+            //: $siteRepo->findAll();
+        : $siteRepo->findSiteOrderByNom();
 
         if (!$site) {
             $site = new Site();
