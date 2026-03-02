@@ -34,7 +34,7 @@ final class AdminController extends AbstractController
         $page = max($page, 1);
         $offset = ($page - 1) * $limit;
 
-        list($nbTotal, $users) = $uRepo->findUsersOrderByRole($limit, $offset);
+        list($nbTotal, $users) = $uRepo->findUsersOrderByUserName($limit, $offset);
 
         $nbPagesMax = ceil($nbTotal / $limit);
 

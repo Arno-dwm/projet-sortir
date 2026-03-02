@@ -11,8 +11,87 @@
                     <div class="d-flex justify-content-end">
                         <a href="{{ path('app_register') }}" class="btn btn-primary">Ajouter Un Utilisateur</a>
                     </div>
+                    <!--HTML from anywhere-->
+                    <div data-controller="hello" data-hello-hidden-class="d-none">
+                        <div class="d-flex justify-content-end mt-2">
+                        <button data-action="click->hello#showAdmin" class="btn btn-secondary">Afficher les admininitrateurs</button>
+                        </div>
 
+                        <div data-hello-target="content" class="d-none">
 
+                            <span data-hello-target="output"></span>
+                            <h2 class="text-center mb-4">Gestion des Administrateurs</h2>
+                            <div class="d-flex justify-content-end mb-2">
+                            <button data-action="click->hello#showUser" class="btn btn-outline-secondary">Cacher</button>
+                            </div>
+                            <table class="table table-hover table-striped border">
+
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Pseudo</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Actif</th>
+                                    <th>Rôle</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for user in users |filter(u => 'ROLE_ADMIN' in u.roles)%}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('app_user_detail', {username : user.username}) }}">{{ user.username }}</a>
+                                        </td>
+                                        <td>{{ user.nom|upper }}</td>
+                                        <td>{{ user.prenom | capitalize }}</td>
+                                        <td>{{ user.mail }}</td>
+                                        <td>{{ user.telephone }}</td>
+
+                                        {% if user.actif == 1 %}
+                                            <td> Actif
+                                            {% if user.userIdentifier != app.user.userIdentifier %}
+                                                {% if user.userIdentifier != 'admin' %}
+                                                    <a href="{{ path('app_admin_inactif', {id: user.id, _token: csrf_token('inactif' ~ user.id)}) }}"
+                                                       class="btn btn-secondary btn-sm ms-lg-4">Passer inactif</a></td>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            <td>Inactif
+
+                                                <a href="{{ path('app_admin_actif', {id: user.id, _token: csrf_token('actif' ~ user.id)}) }}"
+                                                   class="btn btn-success btn-sm  ms-sm-0 ms-lg-3">Passer Actif</a></td>
+                                        {% endif %}
+                                        {% if 'ROLE_ADMIN' in user.roles %}
+                                            <td>Admin
+                                            {% if user.userIdentifier != app.user.userIdentifier %}
+                                                {% if user.userIdentifier != 'admin' %}
+                                                    <a href="{{ path('app_admin_role_user', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
+                                                       class="btn btn-warning btn-sm ms-1">Enlever Admin</a></td>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            <td>User
+                                                <a href="{{ path('app_admin_role_admin', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
+                                                   class="btn btn-success  btn-sm  ms-sm-0 ms-lg-3">Passer Admin</a></td>
+                                        {% endif %}
+                                        <td>{% if user.userIdentifier != 'admin' and user.userIdentifier != 'user_default' and user.userIdentifier != app.user.userIdentifier  %}
+                                            <a href="{{ path('app_admin_supprimer', {id: user.id, _token: csrf_token('supprimer' ~ user.id)}) }}"
+                                               class="btn btn-danger btn-sm  ms-sm-0 ms-lg-3">Supprimer</a></td>
+                                        {% endif %}
+                                    </tr
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">
+                                            Aucun participant inscrit pour le moment.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <h2 class="text-center mb-4">Gestion des participants</h2>
                     <div class="mb-2">
                         {% if nb_pages_max > 1 %}
