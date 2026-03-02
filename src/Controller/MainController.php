@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\SortieFilterDTO;
+use App\Entity\Sortie;
 use App\Form\SortieFilterType;
 use App\Repository\InscriptionRepository;
 use App\Repository\SortieRepository;
@@ -23,6 +24,8 @@ final class MainController extends AbstractController
         $form = $this->createForm(SortieFilterType::class, $dto);
 
         $form->handleRequest($request);
+
+
 
         //Pour pagination
         $page = max(1, $request->query->getInt('page', 1));
