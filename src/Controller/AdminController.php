@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\DTO\VilleFilterDTO;
+use App\Entity\Site;
 use App\Entity\User;
 use App\Entity\Ville;
+use App\Form\SiteFilterType;
+use App\Form\SiteType;
 use App\Form\VilleFilterType;
 use App\Form\VilleType;
 use App\Repository\SiteRepository;
@@ -259,4 +262,58 @@ final class AdminController extends AbstractController
 
         ]);
     }
+    #[Route('/sites/{id?0}', name: '_sites', requirements: ['id' => '\d+'])]
+    public function gestionSites(
+        SiteRepository $siteRepo,
+        Request $request,
+        EntityManagerInterface $em,
+        Site $site = null
+    ): Response
+    {
+
+
+        $dto = new SiteFilterDTO();
+        $formFilter = $this->createForm(SiteFilterType::class, $dto, [
+            'method' => 'GET',
+            'csrf_protection' => false
+        ]);
+        $formFilter->handleRequest($request);
+
+        $sites = ($formFilter->isSubmitted() && $formFilter->isValid())
+            ? $siteRepo->findByFilters($dto)
+            : $siteRepo->findAll();
+
+        if (!$site) {
+            $site = new Site();
+        }
+
+        $formSite = $this->createForm(SiteType::class, $site);
+        $formSite->handleRequest($request);
+
+        if ($formSite->isSubmitted() && $formSite->isValid()) {
+
+            // Si c'est un nouveau site
+            if ($site->getId() === null) {
+                $em->persist($site);
+                $message = 'a bien été enregistré';
+            } else {
+                $message = 'a bien été modifié';
+            }
+
+            $em->flush();
+
+            $this->addFlash('success', 'Le site ' . $site->getNom() . ' ' . $message . ' !');
+
+            return $this->redirectToRoute('app_admin_sites');
+        }
+
+        return $this->render('admin/gestion-sites.html.twig', [
+            'sites' => $sites,
+            'form_filter' => $formFilter->createView(),
+            'form_site' => $formSite->createView(),
+            'edit_mode' => $site->getId() !== null
+        ]);
+    }
+
+
 }
