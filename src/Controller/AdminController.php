@@ -11,6 +11,7 @@ use App\Form\SiteFilterType;
 use App\Form\SiteType;
 use App\Form\VilleFilterType;
 use App\Form\VilleType;
+use App\Helper\UserDefaultManager;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use App\Repository\VilleRepository;
@@ -151,26 +152,14 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/supprimer/{id}', name: '_supprimer', requirements: ['id' => '\d+'])]
-    public function supprimerUtilisateur(UserRepository $uRepo,UserPasswordHasherInterface $userPasswordHasher, SiteRepository $sRepo , int $id, EntityManagerInterface $em, Request $request): Response
+    public function supprimerUtilisateur(UserRepository $uRepo, UserPasswordHasherInterface $userPasswordHasher, SiteRepository $sRepo , int $id, EntityManagerInterface $em, Request $request, UserDefaultManager $userDefaultManager): Response
     {
         $user = $uRepo->find($id);
 
         $userDefault = $uRepo->findOneBy(['username' => 'user_default']);
 
-
-        // TODO à refactor dans une methode dans le dossier helper
         if(!$userDefault) {
-            $site = $sRepo->find(1);
-            $userDefault = New User();
-            $userDefault->setUsername('user_default');
-            $userDefault->setRoles(['ROLE_USER']);
-            $userDefault->setActif(false);
-            // il faudrait créer une adresse mail "poubelle"
-            $userDefault->setMail('utilisateur@mail.com');
-            $userDefault->setNom('utilisateur');
-            $userDefault->setPrenom('utilisateur');
-            $userDefault->setPassword($userPasswordHasher->hashPassword($user, '1234'));
-            $userDefault->setSite($site);
+            $userDefault = $userDefaultManager->createUserDefault($sRepo, $userPasswordHasher);
             $em->persist($userDefault);
             $em->flush($userDefault);
         }
