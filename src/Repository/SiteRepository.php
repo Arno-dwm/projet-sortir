@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\DTO\SiteFilterDTO;
+use App\DTO\VilleFilterDTO;
 use App\Entity\Site;
+use App\Entity\Ville;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,7 +18,17 @@ class SiteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Site::class);
     }
+    public function findByFilters(SiteFilterDTO $filters): array
+    {
+        $qb = $this->createQueryBuilder('site');
 
+        if ($filters->inputSearch) {
+            $qb->andWhere('site.nom LIKE :search')
+                ->setParameter('search', '%'.$filters->inputSearch.'%');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
     //    /**
     //     * @return Site[] Returns an array of Site objects
     //     */
