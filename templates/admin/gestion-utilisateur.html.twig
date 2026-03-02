@@ -83,8 +83,8 @@
                                                 <a href="{{ path('app_admin_role_admin', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
                                                    class="btn btn-success  btn-sm  ms-sm-0 ms-lg-3">Passer Admin</a></td>
                                         {% endif %}
-                                    <td>{% if user.userIdentifier != 'admin' and user.userIdentifier != app.user.userIdentifier  %}
-                                        <a href="{{ path('app_admin_role_admin', {id: user.id, _token: csrf_token('role_admin' ~ user.id)}) }}"
+                                    <td>{% if user.userIdentifier != 'admin' and user.userIdentifier != 'user_default' and user.userIdentifier != app.user.userIdentifier  %}
+                                        <a href="{{ path('app_admin_supprimer', {id: user.id, _token: csrf_token('supprimer' ~ user.id)}) }}"
                                            class="btn btn-danger btn-sm  ms-sm-0 ms-lg-3">Supprimer</a></td>
                                     {% endif %}
                                 </tr
