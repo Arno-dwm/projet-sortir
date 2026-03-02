@@ -155,14 +155,14 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/supprimer/{id}', name: '_supprimer', requirements: ['id' => '\d+'])]
-    public function supprimerUtilisateur(UserRepository $uRepo, UserPasswordHasherInterface $userPasswordHasher, SiteRepository $sRepo , int $id, EntityManagerInterface $em, Request $request, UserDefaultManager $userDefaultManager): Response
+    public function supprimerUtilisateur(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request, UserDefaultManager $userDefaultManager): Response
     {
         $user = $uRepo->find($id);
 
         $userDefault = $uRepo->findOneBy(['username' => 'user_default']);
 
         if(!$userDefault) {
-            $userDefault = $userDefaultManager->createUserDefault($sRepo, $userPasswordHasher);
+            $userDefault = $userDefaultManager->createUserDefault();
             $em->persist($userDefault);
             $em->flush($userDefault);
         }
