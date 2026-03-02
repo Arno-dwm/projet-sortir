@@ -26,24 +26,24 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('username', TextType::class,[
-                'label' => 'Pseudo'
+                'label' => 'Pseudo*'
             ])
             ->add('prenom', TextType::class,[
-                'label' => 'Prénom'
+                'label' => 'Prénom*'
             ])
             ->add('nom', TextType::class,[
-                'label' => 'Nom'
+                'label' => 'Nom*'
             ])
             ->add('telephone', TextType::class,[
-                'label' => 'Téléphone'
+                'label' => 'Téléphone*'
             ])
             ->add('mail', TextType::class,[
-                'label' => 'Email'
+                'label' => 'Email*'
             ])
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
-                'label' => 'Mot de passe',
+                'label' => 'Mot de passe*',
                 'type' => PasswordType::class,
                 'options' => [
                     'attr' => ['autocomplete' => 'new-password'],
@@ -64,16 +64,16 @@ class RegistrationFormType extends AbstractType
                         # vérifier si le password est compromis
                        */
                     ],
-                    'label' => 'Votre mot de passe',
+                    'label' => 'Votre mot de passe*',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmez mot de passe',
+                    'label' => 'Confirmez mot de passe*',
                 ],
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
 
             ])
             ->add('site', EntityType::class, [
-                'label' => 'Ville de rattachement',
+                'label' => 'Ville de rattachement*',
                 'class' => Site::class,
                 'choice_label' => 'nom',
             ])
