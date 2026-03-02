@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\SiteFilterDTO;
 use App\DTO\VilleFilterDTO;
 use App\Entity\Site;
 use App\Entity\User;
