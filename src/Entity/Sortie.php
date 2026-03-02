@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -20,10 +21,15 @@ class Sortie
     private ?string $nom = null;
 
     #[ORM\Column]
+    #[Assert\GreaterThan(
+        value: "now",
+        message: "La date et l'heure doivent être futures!"
+    )]
     private ?\DateTime $dateHeureDebut = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $duree = null;
+
 
     #[ORM\Column]
     private ?\DateTime $dateLimiteInscription = null;

@@ -165,7 +165,7 @@ final class SortieController extends AbstractController
                     $em->flush();
                     $this->addFlash('success', "Votre inscription à la sortie {$sortie->getNom()} a été enregistrée");
 
-                    if ($sortie->getInscriptions()->count() >= $sortie->getNbInscriptionsMax()) {
+                    if (($sortie->getNbInscriptionsMax() - $sortie->getInscriptions()->count()) == 1) {
                         $etat = $em->getRepository(Etat::class)->findOneBy(['code' => 'CLO']);
                         $sortie->setEtat($etat);
                         $em->persist($sortie);
