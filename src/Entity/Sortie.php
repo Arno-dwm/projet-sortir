@@ -30,6 +30,7 @@ class Sortie
     #[ORM\Column(nullable: true)]
     private ?int $duree = null;
 
+
     #[ORM\Column]
     private ?\DateTime $dateLimiteInscription = null;
 
