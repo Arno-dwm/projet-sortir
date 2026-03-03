@@ -80,7 +80,7 @@
                         <li class="list-group-item">{{ sortie.etat.libelle }}</li>
                     </ul>
                     <div class="card-body">
-                        {% if is_granted(('IS_AUTHENTICATED')) %}
+
                             {% if sortie.id in inscriptions %}
                                 {% if not (sortie.organisateur.username == app.user.username) %}
                                 <a href="{{ path('app_sortie_desinscription', {id : sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}" class="btn btn-outline-danger">Se désister</a>
@@ -91,15 +91,18 @@
 
 
                             {% endif %}
-                            {% if sortie.organisateur.username == app.user.username %}
-                                {% if sortie.etat.code == 'CRE' %}
+                            {% if sortie.organisateur.username == app.user.username or is_granted(('ROLE_ADMIN')) %}
+                                {% if (sortie.etat.code == 'CRE') and (sortie.organisateur.username == app.user.username) %}
                                     <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-secondary" target="_self">Modifier</a>
                                     {% elseif not(sortie.etat.code in ['ANN', 'FIN']) %}
                                         <a href="{{ path('app_sortie_annuler', {id: sortie.id}) }}" class="btn btn-warning" target="_self">Annuler</a>
                                     {% endif %}
+
+
                             {% endif %}
+
 {#                            <a href="{{ path('app_sortie_detail', {id : sortie.id}) }}" class="btn btn-secondary">Afficher</a>#}
-                        {% endif %}
+
                     </div>
                 </div>
         {% else %}
