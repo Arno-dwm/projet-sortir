@@ -61,10 +61,6 @@ final class SortieController extends AbstractController
                 $em->persist($inscription);
             }
 
-
-
-
-
             $em->flush();
 
             $this->addFlash('success', 'Une nouvelle proposition de sortie a été enregistrée !');
