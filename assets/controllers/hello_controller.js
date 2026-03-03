@@ -1,16 +1,28 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus"
 
-/*
- * This is an example Stimulus controller!
- *
- * Any element with a data-controller="hello" attribute will cause
- * this controller to be executed. The name "hello" comes from the filename:
- * hello_controller.js -> "hello"
- *
- * Delete this file or adapt it for your use!
- */
 export default class extends Controller {
-    connect() {
-        this.element.textContent = 'Hello Stimulus! Edit me in assets/controllers/hello_controller.js';
+    static targets = ["output", "content"]
+    static classes = ["hidden"] // Récupère "d-none" depuis le HTML
+
+    showAdmin() {
+        this.reveal()
     }
+
+    showUser() {
+        this.hidde()
+    }
+
+    reveal(role) {
+        // 1. On change le texte
+        this.outputTarget.textContent = role
+
+        // 2. On rend la div visible en retirant la classe "hidden"
+        this.contentTarget.classList.remove(this.hiddenClass)
+
+    }
+
+    hidde() {
+        this.contentTarget.classList.add(this.hiddenClass)
+    }
+
 }

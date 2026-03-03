@@ -77,33 +77,6 @@ class RegistrationFormType extends AbstractType
                 'class' => Site::class,
                 'choice_label' => 'nom',
             ])
-            ->add('lienImgFile', FileType::class, [
-                'mapped' => false,
-                'label' => 'Ma photo',
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '1024k',
-                        'maxSizeMessage' => 'Votre fichier est trop lourd. Max: 1Mo',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/png',
-                            'image/jpg',
-                        ],
-                        'mimeTypesMessage' => 'format acceptés : jpeg, jpg, png'
-                    ])
-                ]
-            ])
-
-            /*->add('afreeterms', CheckboxType::class, [
-                'label' => 'Accepter les conditions d\'utilisations',
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue(
-                        message: 'You should agree to our terms.',
-                    ),
-                ],
-            ])*/
         ;
 
     }
