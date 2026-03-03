@@ -42,16 +42,16 @@
     </div>
     <section class="sorties-list">
         {% for sortie in sorties %}
-
             {% if sortie.etat.code == 'CRE' and sortie.organisateur.username == app.user.username %}
                 {% set classVisible="card card-visibilityOn" %}
-                {% elseif sortie.etat.code == 'CRE' and not (sortie.organisateur.username == app.user.username) %}
-                    {% set classVisible="card card-visibilityOff" %}
-                {% elseif sortie.etat.code == 'FIN' %}
-                    {% set classVisible="card card-visibility50" %}
-                {% else %}
-                    {% set classVisible="card card-visibilityOn" %}
+            {% elseif sortie.etat.code == 'CRE' and not (sortie.organisateur.username == app.user.username) %}
+                {% set classVisible="card card-visibilityOff" %}
+            {% elseif (sortie.etat.code in ['CLO', 'FIN'])  %}
+                {% set classVisible="card card-visibility50" %}
+            {% else %}
+                {% set classVisible="card card-visibilityOn" %}
             {% endif %}
+
                 <div class="{{ classVisible }}" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title"><a href="{{ path('app_sortie_detail', {id : sortie.id}) }}">{{ sortie.nom }}</a></h5>
@@ -86,9 +86,9 @@
                                 <a href="{{ path('app_sortie_desinscription', {id : sortie.id, _token: csrf_token('inscription_delete' ~ sortie.id)}) }}" class="btn btn-outline-danger">Se désister</a>
 
                                 {% endif %}
-                                {% elseif not(sortie.etat.code in ['ANN', 'FIN']) %}
+                                {% elseif sortie.etat.code == 'OUV' %}
                                     <a href="{{ path('app_sortie_inscription', {id: sortie.id, _token: csrf_token('inscription_create' ~ sortie.id)}) }}" class="btn btn-outline-success">S'inscrire</a>
-                                    {% else %}
+
 
                             {% endif %}
                             {% if sortie.organisateur.username == app.user.username %}

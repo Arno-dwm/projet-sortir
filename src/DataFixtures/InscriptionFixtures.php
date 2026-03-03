@@ -20,23 +20,30 @@ class InscriptionFixtures extends Fixture
         $participants = $manager->getRepository(User::class)->findAll();
         $participantsFiltres = array_slice($participants, 0, 20);
 
-        $criteres = [
-            'etat'=>[2,3,4,5,6],
-        ];
-        $sorties = $manager->getRepository(Sortie::class)->findBy($criteres);
+
+        $sorties = $manager->getRepository(Sortie::class)->findAll();
 
 
         for ($i = 0; $i < 30; $i++) {
             $participant = $faker->randomElement($participantsFiltres);
             $sortie = $faker->randomElement($sorties);
 
-            if($sortie->getOrganisateur() != $participant)
-            {
-                $inscription->setDateInscription(new \DateTime())
+            if($sortie->getEtat()->getCode() != 'CRE'){
+                $dateDebut = $sortie->getDateHeureDebut();
+                $dateLimite = $sortie->getDateLimiteInscription();
+
+                $dateLimite = $faker->dateTimeBetween(
+                    (clone $dateDebut)->modify('-30 days'),
+                    (clone $dateDebut)->modify('-1 day')
+                );
+
+                $inscription->setDateInscription($faker->dateTimeBetween($dateLimite, $dateDebut))
                     ->setParticipant($participant)
                     ->setSortie($sortie);
                 $manager->persist($inscription);
             }
+
+
 
 
         }

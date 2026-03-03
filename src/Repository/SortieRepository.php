@@ -33,8 +33,9 @@ class SortieRepository extends ServiceEntityRepository
                     CASE
                         WHEN e.code = 'CRE' THEN 1
                         WHEN e.code = 'OUV' THEN 2
-                        WHEN e.code = 'FIN' THEN 3
-                        ELSE 4
+                        WHEN e.code = 'EC' THEN 3
+                        WHEN e.code = 'FIN' THEN 4
+                        ELSE 5
                     END AS HIDDEN ordreEtat
                 ")
             ->orderBy('ordreEtat', 'ASC')
@@ -64,8 +65,8 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('user', $user);
         }
         if($filters->ended){
-            $qb->andWhere('s.etat = :etat')
-                ->setParameter('etat', 5);
+            $qb->andWhere('e.code = :etat')
+                ->setParameter('etat', 'FIN');
         }
 
         // Filtre dates
@@ -94,13 +95,13 @@ class SortieRepository extends ServiceEntityRepository
             ->leftJoin('s.lieu', 'l')
             ->addSelect('l')
             ->andWhere('e.code in (:etatsVisibles)')
-            ->setParameter('etatsVisibles', ['CRE','OUV','FIN','EC'])
+            ->setParameter('etatsVisibles', ['CRE','OUV','FIN','EC', 'CLO'])
             ->orderBy('s.dateHeureDebut', 'ASC');
         return $qb->getQuery()->getResult();
     }
 
     //Fonction pour tester pagination
-    public function findAllNotCanceledPagin(){
+    public function findAllNotCanceledPagin(User $user){
         return $this->createQueryBuilder('s')
           ->leftJoin('s.etat', 'e')
             ->addSelect('e')
@@ -108,21 +109,34 @@ class SortieRepository extends ServiceEntityRepository
             ->addSelect('o')
             ->addSelect("
                     CASE
-                        WHEN e.code = 'CRE' THEN 1
+                        WHEN e.code = 'CRE' AND o = :user THEN 1
                         WHEN e.code = 'OUV' THEN 2
-                        WHEN e.code = 'FIN' THEN 3
-                        ELSE 4
+                        WHEN e.code = 'EC' THEN 3
+                        WHEN e.code = 'FIN' THEN 4
+                        ELSE 5
                     END AS HIDDEN ordreEtat
                 ")
+
             ->leftJoin('s.lieu', 'l')
             ->addSelect('l')
             ->andWhere('e.code in (:etatsVisibles)')
-            ->setParameter('etatsVisibles', ['CRE','OUV','FIN','EC'])
+            ->setParameter('etatsVisibles', ['CRE','OUV','FIN','EC', 'CLO'])
+
+            ->andWhere('(o = :user AND e.code = :etat) OR e.code in (:autresEtat)')
+            ->setParameter('etat', 'CRE')
+            ->setParameter('user', $user->getId())
+            ->setParameter('autresEtat', ['OUV','FIN','EC', 'CLO'])
+
             ->orderBy('ordreEtat', 'ASC')
             ->addOrderBy('s.dateHeureDebut', 'ASC');
 
+
+//        ->andWhere('o.username = :user AND e.code = :etat')
+//            ->setParameter('user', $user->getUsername())
+//            ->setParameter('etat', 'CRE')
     }
     //    /**
+
     //     * @return Sortie[] Returns an array of Sortie objects
     //     */
     //    public function findByExampleField($value): array

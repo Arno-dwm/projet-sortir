@@ -35,8 +35,7 @@ final class MainController extends AbstractController
         //$qb récupère la requete
         $qb = $form->isSubmitted() && $form->isValid()
             ? $sortieRepository->findByFilters($dto, $user)
-            : $sortieRepository->findAllNotCanceledPagin();
-
+            : $sortieRepository->findAllNotCanceledPagin($user);
 
         /*
          * Compter le total SANS limite
@@ -57,12 +56,14 @@ final class MainController extends AbstractController
         $qb->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
 
-        $paginator = new Paginator($qb);
+
 
         if($user){
             $results = $inscriptionRepository->findSortieIdsByUser($user);
             $inscriptions = array_column($results, 'sortieId');
         }
+
+        $paginator = new Paginator($qb);
 
         return $this->render('main/home.html.twig', [
             'sorties' => $paginator,
