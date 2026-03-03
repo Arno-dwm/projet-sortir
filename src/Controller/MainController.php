@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\SortieFilterDTO;
+use App\Entity\Sortie;
 use App\Form\SortieFilterType;
 use App\Repository\InscriptionRepository;
 use App\Repository\SortieRepository;
@@ -24,6 +25,8 @@ final class MainController extends AbstractController
 
         $form->handleRequest($request);
 
+
+
         //Pour pagination
         $page = max(1, $request->query->getInt('page', 1));
         $limit = 10;
@@ -32,8 +35,7 @@ final class MainController extends AbstractController
         //$qb récupère la requete
         $qb = $form->isSubmitted() && $form->isValid()
             ? $sortieRepository->findByFilters($dto, $user)
-            : $sortieRepository->findAllNotCanceledPagin();
-
+            : $sortieRepository->findAllNotCanceledPagin($user);
 
         /*
          * Compter le total SANS limite
@@ -54,12 +56,14 @@ final class MainController extends AbstractController
         $qb->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
 
-        $paginator = new Paginator($qb);
+
 
         if($user){
             $results = $inscriptionRepository->findSortieIdsByUser($user);
             $inscriptions = array_column($results, 'sortieId');
         }
+
+        $paginator = new Paginator($qb);
 
         return $this->render('main/home.html.twig', [
             'sorties' => $paginator,

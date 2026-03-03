@@ -52,13 +52,17 @@ final class SortieController extends AbstractController
 
             $em->persist($sortie);
 
-            // Ajout de l'organisateur comme inscrit.
-            $inscription = new Inscription();
-            $inscription->setSortie($sortie);
-            $inscription->setParticipant($user);
-            $inscription->setDateInscription(new \DateTime('now'));
+            // Ajout de l'organisateur comme inscrit si publication directe
+            if($etatCode === 'OUV') {
+                $inscription = new Inscription();
+                $inscription->setSortie($sortie);
+                $inscription->setParticipant($user);
+                $inscription->setDateInscription(new \DateTime('now'));
+                $em->persist($inscription);
+            }
 
-            $em->persist($inscription);
+
+
 
 
             $em->flush();
@@ -112,6 +116,14 @@ final class SortieController extends AbstractController
 
                 };
 
+                // Ajout de l'organisateur comme inscrit si publication directe
+                if($etatCode === 'OUV') {
+                    $inscription = new Inscription();
+                    $inscription->setSortie($sortie);
+                    $inscription->setParticipant($user);
+                    $inscription->setDateInscription(new \DateTime('now'));
+                    $em->persist($inscription);
+                }
                 $etat = $em->getRepository(Etat::class)->findOneBy(['code' => $etatCode]);
                 $sortie->setEtat($etat);
             }
