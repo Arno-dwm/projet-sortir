@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Lieu;
 use App\Entity\Ville;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
