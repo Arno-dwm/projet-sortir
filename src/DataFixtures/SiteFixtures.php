@@ -24,7 +24,7 @@ class SiteFixtures extends Fixture
         for ($i = 0; $i < 7; $i++) {
             $nombreAleatoire = $faker->numberBetween(1, 5);
             $site = new Site();
-            $site->setNom($faker->randomElement($villeSlice));
+            $site->setNom($faker->randomElement($villeSlice)->getNom());
 
             $manager->persist($site);
         }
