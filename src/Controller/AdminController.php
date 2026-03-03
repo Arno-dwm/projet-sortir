@@ -36,6 +36,8 @@ final class AdminController extends AbstractController
 
         list($nbTotal, $users) = $uRepo->findUsersOrderByUserName($limit, $offset);
 
+        $listAll = $uRepo->findAll();
+
         $nbPagesMax = ceil($nbTotal / $limit);
 
 
@@ -48,6 +50,7 @@ final class AdminController extends AbstractController
             'users' => $users,
             'page' => $page,
             'nb_pages_max' => $nbPagesMax,
+            'all_users' => $listAll,
         ]);
     }
 
@@ -229,7 +232,7 @@ final class AdminController extends AbstractController
         $form->handleRequest($request);
 
         list($nbTotal, $villes) = $form->isSubmitted() && $form->isValid()
-            ? $villeRepo->findByFilters($dto, $limit, $offset)
+            ? $villeRepo->findByFiltersPagination($dto, 100, $offset)
             : $villeRepo->findVilleOrderByNom($limit, $offset);
 
         $nbPagesMax = ceil($nbTotal / $limit);

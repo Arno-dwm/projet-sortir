@@ -12,7 +12,7 @@
                         <a href="{{ path('app_register') }}" class="btn btn-primary">Ajouter Un Utilisateur</a>
                     </div>
                     <!--HTML from anywhere-->
-                    <div data-controller="hello" data-hello-hidden-class="d-none">
+                    <div data-controller="hello" data-hello-hidden-class="d-none mb-2">
                         <div class="d-flex justify-content-end mt-2">
                         <button data-action="click->hello#showAdmin" class="btn btn-secondary">Afficher les admininitrateurs</button>
                         </div>
@@ -39,7 +39,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for user in users |filter(u => 'ROLE_ADMIN' in u.roles)%}
+                                {% for user in all_users |filter(u => 'ROLE_ADMIN' in u.roles)%}
                                     <tr>
                                         <td>
                                             <a href="{{ path('app_user_detail', {username : user.username}) }}">{{ user.username }}</a>
