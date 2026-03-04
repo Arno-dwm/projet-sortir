@@ -35,6 +35,18 @@
                                         <div class="col-12 mb-3">
                                             {{ form_row(field) }}
                                         </div>
+                                        {% elseif field.vars.name == 'lieu' %}
+
+                                            <div class="col-md-6 mb-3 d-flex justify-content-between align-items-end">
+                                                {{ form_row(field) }}
+                                                <a href="{{ path('app_lieu_create') }}"
+                                                   data-turbo-frame="modal-frame"
+                                                   class="btn btn-secondary mb-3"
+                                                   id="btnAjoutLieu" >
+                                                    +
+                                                </a>
+                                            </div>
+
                                     {% else %}
                                         <div class="col-md-6 mb-3">
                                             {{ form_row(field) }}
@@ -78,15 +90,12 @@
 
                         </div>
                     </div>
-                    <a href="{{ path('app_lieu_create') }}"
-                       data-turbo-frame="modal-frame"
-                       class="btn btn-primary"
-                       id="btnAjoutLieu" >
-                        Ajouter un Lieu
-                    </a>
+
+
                     <dialog id="modal">
                         <turbo-frame id="modal-frame">
-                            {# Le formulaire Lieu sera injecté ici #}
+                            {# formulaire lieu injecté ici #}
+                            <a id="btnClose" class="btn btn-secondary">xx</a>
                         </turbo-frame>
                     </dialog>
                 </div>
@@ -100,6 +109,17 @@
                 document.getElementById("modal").showModal();
             }
         });
+
+        //Permet de gérer le bouton de fermeture de la modale situé dans _form-lieu
+        document.addEventListener('click', (e) =>{
+            const btn = e.target.closest('[data-action="close-modal"]');
+            if (!btn) return;
+
+            const dialog = btn.closest('dialog');
+            if (dialog) {
+                dialog.close();
+            }
+        })
 
 
 

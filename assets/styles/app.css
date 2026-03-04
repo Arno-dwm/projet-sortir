@@ -94,16 +94,10 @@ li>span{
 }
 
 /* Modale pour formulaire jaout de lieu*/
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
+#modal {
+    border : none;
+    border-radius:6px;
+    background-color: #c9c9c9;
+    padding :50px;
 }
 
-.modal-content {
-    background: white;
-    width: 400px;
-    margin: 10% auto;
-    padding: 20px;
-}
