@@ -79,6 +79,7 @@
                         </div>
                     </div>
                 </div>
+                {{ ux_map(map, { style: 'height: 300px' }) }}
 
                 {# ------------ Affichage des isncriptions -------------- #}
                 <div class="mt-2">
@@ -145,6 +146,8 @@
                         {% endif %}
                     {% endif %}
 
+
+
                     {# ------------ Inscirption -------------- #}
                     {% if app.user != sortie.organisateur %}
                             {% for inscrit in sortie.inscriptions|filter( i => i.participant.userIdentifier == app.user.userIdentifier) %}
@@ -178,4 +181,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
