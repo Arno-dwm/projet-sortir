@@ -21,7 +21,7 @@ class AnnulerSortieType extends AbstractType
                         'message' => 'Veuillez saisir un motif.'
                     ]),
                     new Length([
-                        'max' => 500
+                        'max' => 200
                     ])
                 ],
             ])

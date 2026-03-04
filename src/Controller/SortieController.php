@@ -253,6 +253,12 @@ final class SortieController extends AbstractController
     #[Route('/annuler/{id}', name: '_annuler', requirements: ['id' => '\d+'])]
     public function annuler(Request $request, Sortie $sortie, EntityManagerInterface $em, EtatRepository $etatRepository): Response
     {
+        if ($sortie->getEtat()->getCode() === 'ANN') {
+            $this->addFlash('danger', 'Cette sortie est déjà annulée.');
+            return $this->redirectToRoute('app_sortie_detail', [
+                'id' => $sortie->getId()
+            ]);
+        }
         $form= $this->createForm(AnnulerSortieType::class, null, [
             'attr' => [
                 'id' => 'annulation-form'
@@ -260,9 +266,13 @@ final class SortieController extends AbstractController
         ]);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-            $infos=$sortie->getInfosSortie();
+
+            //$infos=$sortie->getInfosSortie();
+            //$motif = $form->get('motif')->getData();
+           // $sortie->setInfosSortie("Motif : {$motif}. {$infos}");
             $motif = $form->get('motif')->getData();
-            $sortie->setInfosSortie("Motif : {$motif}. {$infos}");
+            $sortie->setMotifAnnulation($motif);
+
             $sortie->setEtat($etatRepository->findOneBy(['code' => 'ANN']));
 
             $em->persist($sortie);
