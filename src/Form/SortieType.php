@@ -57,6 +57,7 @@ class SortieType extends AbstractType
                 'widget' => 'single_text',
                 'attr' => [
                     'min' => (new \DateTime())->format('Y-m-d')
+
                 ]
             ])
             ->add('lieu', EntityType::class, [
@@ -121,6 +122,10 @@ class SortieType extends AbstractType
             ])
             ->add('infosSortie', TextareaType::class, [
                 'label' => 'Description et infos',
+                'attr'=>[
+                    'maxlength'=>300,
+                    'rows'=>5
+                ]
             ]);
     }
 

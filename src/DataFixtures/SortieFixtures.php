@@ -68,7 +68,8 @@ class SortieFixtures extends Fixture
                 ->setDuree($faker->numberBetween(20, 120))
                 ->setDateLimiteInscription($dateLimite)
                 ->setNbInscriptionsMax($faker->numberBetween(1, 30))
-                ->setInfosSortie($faker->realText(500))
+                ->setMotifAnnulation($faker->realText(200))
+                ->setInfosSortie($faker->realText(300))
                 ->setEtat($etat)
                 ->setLieu($faker->randomElement($lieux))
                 ->setOrganisateur($organisateur);
