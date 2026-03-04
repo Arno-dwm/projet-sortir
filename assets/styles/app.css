@@ -1,5 +1,6 @@
+
 body {
-    background-color: cadetblue;
+    background-color:#29AB87;
 }
 
 /* Homepage */
@@ -46,9 +47,12 @@ form{
     margin-top:10px;
 }
 
-.card-text a{
-    color:cadetblue;
+.card-text>a{
+    color:#29AB87;
     text-decoration: none;
+}
+.card-title a{
+    color:#29AB87;
 }
 .card-visibilityOff{
     display:none
@@ -88,3 +92,12 @@ li>span{
 .pagination{
     margin-left:10px;
 }
+
+/* Modale pour formulaire jaout de lieu*/
+#modal {
+    border : none;
+    border-radius:6px;
+    background-color: #c9c9c9;
+    padding :50px;
+}
+
