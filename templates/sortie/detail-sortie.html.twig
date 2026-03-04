@@ -60,25 +60,26 @@
                                 <p>{{ sortie.duree |capitalize }} </p>
                                 <p>{{ sortie.infosSortie |capitalize }} </p>
 
-                            </div>
-                            <div class="col-6 col-lg-3 fw-bold">
-                                <p>Ville organisatrice :</p>
-                                <p>Lieu :</p>
-                                <p>Rue :</p>
-                                <p>Code postal : </p>
-                                <p>Latitude : </p>
-                                <p>Longitude : </p>
-                            </div>
-                            <div class="col-6 col-lg-3">
-                                <p>{{ sortie.organisateur.site.nom |capitalize }} </p>
-                                <p>{{ sortie.lieu.nom |capitalize }} </p>
-                                <p>{{ sortie.lieu.rue |capitalize }} </p>
-                                <p>{{ sortie.lieu.ville.getCodePostal }} </p>
-                                <p>{{ sortie.lieu.latitude |capitalize }} </p>
-                                <p>{{ sortie.lieu.longitude |capitalize }} </p>
-                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3 fw-bold">
+                            <p>Ville organisatrice :</p>
+                            <p>Lieu :</p>
+                            <p>Rue :</p>
+                            <p>Code postal : </p>
+                            <p>Latitude : </p>
+                            <p>Longitude : </p>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <p>{{ sortie.organisateur.site.nom |capitalize }} </p>
+                            <p>{{ sortie.lieu.nom |capitalize }} </p>
+                            <p>{{ sortie.lieu.rue |capitalize }} </p>
+                            <p>{{ sortie.lieu.ville.getCodePostal }} </p>
+                            <p>{{ sortie.lieu.latitude |capitalize }} </p>
+                            <p>{{ sortie.lieu.longitude |capitalize }} </p>
                         </div>
                     </div>
+                </div>
+                {{ ux_map(map, { style: 'height: 300px' }) }}
 
                     {# ------------ Affichage des isncriptions -------------- #}
                     <div class="mt-2">
