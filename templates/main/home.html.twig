@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <h1 class="d-none">Quelle sera votre prochaine sortie ?</h1>
     <div class="form-filters">
     {{ form_start(form) }}
     <legend>Filtrer les sorties</legend>
@@ -57,13 +58,15 @@
                         <h5 class="card-title"><a href="{{ path('app_sortie_detail', {id : sortie.id}) }}">{{ sortie.nom }}</a></h5>
                         <p class="card-text">Organisé par
                             {% if sortie.organisateur.username == app.user.username %}
-                            <a href="{{ path('app_user_mon_profil')}}">
+                                <a href="{{ path('app_user_mon_profil')}}">
+                                    {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }}
+                                </a>
                             {% else %}
-                            <a href="{{ path('app_user_detail', {username : sortie.organisateur.username}) }}">
-
+                                <a href="{{ path('app_user_detail', {username : sortie.organisateur.username}) }}">
+                                    {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }}
+                                </a>
                             {% endif %}
-                                {{ "%s %s." | format(sortie.organisateur.prenom,sortie.organisateur.nom | first) }}
-                            </a>
+
                         </p>
                         {% if sortie.id in inscriptions %}
                             <span class="badge text-bg-success">Inscrit</span>
