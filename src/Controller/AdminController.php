@@ -70,7 +70,7 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en ADMIN');
-            return $this->redirectToRoute('app_admin_gestion');
+            return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
         }
 
         $this->addFlash('danger', "Action impossible");
@@ -93,7 +93,7 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', 'Le rôle de ' . $user->getUsername() . ' a été modifié en USER');
-            return $this->redirectToRoute('app_admin_gestion');
+            return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
         }
 
         $this->addFlash('danger', "Action impossible");
@@ -116,7 +116,7 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est actif');
-            return $this->redirectToRoute('app_admin_gestion');
+            return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
         }
 
         $this->addFlash('danger', "Action impossible");
@@ -138,7 +138,7 @@ final class AdminController extends AbstractController
         foreach ($sorties as $sortie) {
             if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' or $sortie->getEtat()->getCode() == 'EC') {
                 $this->addFlash('danger', 'Changement à INACTIF impossible pour ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état ' . $sortie->getEtat()->getLibelle() . ')');
-                return $this->redirectToRoute('app_admin_gestion');
+                return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
             }
         }
 
@@ -150,7 +150,7 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est inactif');
-            return $this->redirectToRoute('app_admin_gestion');
+            return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
         }
 
         $this->addFlash('danger', "Action impossible");
@@ -211,7 +211,7 @@ final class AdminController extends AbstractController
             $em->flush($user);
 
             $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' a été remplacé par défault puis supprimer');
-            return $this->redirectToRoute('app_admin_gestion');
+            return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
         }
 
         $this->addFlash('danger', "Action impossible");
