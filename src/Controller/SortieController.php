@@ -44,6 +44,8 @@ final class SortieController extends AbstractController
 
             $sortie->setOrganisateur($user);
 
+
+
             $etatCode = match ($action) {
                 'CRE' => 'CRE',
                 'OUV' => 'OUV',
@@ -57,6 +59,13 @@ final class SortieController extends AbstractController
 
             // Ajout de l'organisateur comme inscrit si publication directe
             if($etatCode === 'OUV') {
+
+                $dateLimite = $sortie->getDateLimiteInscription();
+
+                if ($dateLimite) {
+                    $dateLimite->setTime(23, 59, 59);
+                    $sortie->setDateLimiteInscription($dateLimite);
+                }
                 $inscription = new Inscription();
                 $inscription->setSortie($sortie);
                 $inscription->setParticipant($user);
@@ -97,6 +106,7 @@ final class SortieController extends AbstractController
     public function modifier(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
     {
         $user = $this->getUser();
+        $this->denyAccessUnlessGranted('SORTIE_EDIT', $sortie);
         $sortieForm = $this->createForm(SortieType::class, $sortie, [
             'user' => $user
         ]);
@@ -117,6 +127,13 @@ final class SortieController extends AbstractController
 
                 // Ajout de l'organisateur comme inscrit si publication directe
                 if($etatCode === 'OUV') {
+
+                    $dateLimite = $sortie->getDateLimiteInscription();
+
+                    if ($dateLimite) {
+                        $dateLimite->setTime(23, 59, 59);
+                        $sortie->setDateLimiteInscription($dateLimite);
+                    }
                     $inscription = new Inscription();
                     $inscription->setSortie($sortie);
                     $inscription->setParticipant($user);
@@ -177,7 +194,9 @@ final class SortieController extends AbstractController
         $token = $request->query->get('_token');
         if ($this->isCsrfTokenValid('inscription_create' . $sortie->getId(), $token)) {
             if ($sortie->getInscriptions()->count() < $sortie->getNbInscriptionsMax()) {
-                if ($sortie->getEtat()->getCode() == 'OUV' && $sortie->getDateLimiteInscription() > new \DateTime('now')) {
+                /*$date = new \DateTime('now');
+                $aujourdhui = $date->format('Y-m-d');*/
+                if ($sortie->getEtat()->getCode() === 'OUV' && $sortie->getDateLimiteInscription() > new \DateTime('now')) {
                     $inscription = new Inscription();
                     $inscription->setSortie($sortie);
                     $inscription->setDateInscription(new \DateTime('now'));
@@ -264,8 +283,10 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/annuler/{id}', name: '_annuler', requirements: ['id' => '\d+'])]
+    #[IsGranted('SORTIE_CANCEL',subject: 'sortie')]
     public function annuler(Request $request, Sortie $sortie, EntityManagerInterface $em, EtatRepository $etatRepository): Response
     {
+
         if ($sortie->getEtat()->getCode() === 'ANN') {
             $this->addFlash('danger', 'Cette sortie est déjà annulée.');
             return $this->redirectToRoute('app_sortie_detail', [
