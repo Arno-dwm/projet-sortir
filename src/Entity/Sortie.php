@@ -38,6 +38,10 @@ class Sortie
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        max: 300,
+        maxMessage: 'La description ne peut pas dépasser caractères.'
+    )]
     private ?string $infosSortie = null;
 
     #[ORM\Column(length: 250, nullable: true)]
@@ -60,6 +64,9 @@ class Sortie
      */
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'sortie')]
     private Collection $inscriptions;
+
+    #[ORM\Column(length: 200, nullable: true)]
+    private ?string $motifAnnulation = null;
 
     public function __construct()
     {
@@ -218,6 +225,18 @@ class Sortie
                 $inscription->setSortie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMotifAnnulation(): ?string
+    {
+        return $this->motifAnnulation;
+    }
+
+    public function setMotifAnnulation(?string $motifAnnulation): static
+    {
+        $this->motifAnnulation = $motifAnnulation;
 
         return $this;
     }
