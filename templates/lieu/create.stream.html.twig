@@ -1,0 +1,17 @@
+<turbo-stream action="append" target="sortie_lieu">
+    <template>
+        <option value="{{ lieu.id }}" selected="selected">
+            {{ lieu.nom }}
+        </option>
+    </template>
+</turbo-stream>
+
+<turbo-stream action="after" target="sortie_lieu">
+    <template>
+        <script>
+            document.getElementById('sortie_lieu')
+                .dispatchEvent(new Event('change'));
+            document.getElementById('modal').close();
+        </script>
+    </template>
+</turbo-stream>
