@@ -5,8 +5,10 @@ namespace App\Controller;
 
 use App\Form\ProfilType;
 use App\Helper\FileManager;
+use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Event\TestSuite\Sorted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,7 +79,7 @@ final class UserController extends AbstractController
 
 
     #[Route('/detail/{username}', name: '_detail', requirements: ['slug' => '[a-z0-9\-]+'])]
-    public function detailProfil(UserRepository $userRepo, EntityManagerInterface $em, string $username): Response
+    public function detailProfil(UserRepository $userRepo, EntityManagerInterface $em, string $username, SortieRepository $sortieRepository): Response
     {
         $user = $userRepo->findOneBy(['username' => $username]);
 
@@ -85,8 +87,11 @@ final class UserController extends AbstractController
             throw $this->createNotFoundException('Cet utilisateur n\'existe pas');
         }
 
+        $sorties = $sortieRepository->findBy(['organisateur' => $user->getId()]);
+
         return $this->render('user/detail-profil.html.twig', [
             'user' => $user,
+            'sorties' => $sorties,
         ]);
     }
 

@@ -19,7 +19,7 @@ class VilleRepository extends ServiceEntityRepository
         parent::__construct($registry, Ville::class);
 
     }
-    public function findByFilters(VilleFilterDTO $filters,int $limit, int $offset): array
+    public function findByFiltersPagination(VilleFilterDTO $filters,int $limit, int $offset): array
     {
         $query = $this->createQueryBuilder('ville');
 
@@ -35,6 +35,21 @@ class VilleRepository extends ServiceEntityRepository
             $query->setFirstResult($offset)
                 ->setMaxResults($limit)
                 ->getQuery()->getResult()
+        ];
+    }
+
+    public function findByFilters(VilleFilterDTO $filters): array
+    {
+        $query = $this->createQueryBuilder('ville');
+
+        if ($filters->inputSearch) {
+            $query->andWhere('ville.nom LIKE :search')
+                ->setParameter('search', '%'.$filters->inputSearch.'%');
+        }
+
+
+        return  [
+            $query->getQuery()->getResult()
         ];
     }
 

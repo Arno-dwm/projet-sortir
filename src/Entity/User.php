@@ -26,6 +26,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 180,
+        minMessage: 'le pseudo doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'le pseudo ne doit pas dépasser {{ limit }} caractères',
+        groups: ['length'])]
     private ?string $username = null;
 
     /**
@@ -46,17 +51,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 30)]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 30,
         minMessage: 'le nom doit contenir au moins {{ limit }} caractères',
-        maxMessage: 'le nom ne doit pas dépasser {{ limit }} caractères')]
+        maxMessage: 'le nom ne doit pas dépasser {{ limit }} caractères',
+        groups: ['length'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank()]
     #[Assert\Length(min: 3, max: 30,
         minMessage: 'le prénom doit contenir au moins {{ limit }} caractères',
-        maxMessage: 'le prénom ne doit pas dépasser {{ limit }} caractères')]
+        maxMessage: 'le prénom ne doit pas dépasser {{ limit }} caractères',
+        groups: ['length'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 15, nullable: true)]
