@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\UX\Map\Map;
+use Symfony\UX\Map\Marker;
+use Symfony\UX\Map\Point;
 
 #[Route('/sortie', name: 'app_sortie')]
 final class SortieController extends AbstractController
@@ -152,9 +155,19 @@ final class SortieController extends AbstractController
     #[Route('/detail/{id}', name: '_detail', requirements: ['id' => '\d+'])]
     public function detail(Sortie $sortie): Response
     {
+        $latitude = $sortie->getLieu()->getLatitude();
+        $longitude = $sortie->getLieu()->getLongitude();
 
+        $map = new Map();
+        $map->center(new Point($latitude,$longitude ))
+            ->zoom(11)
+            ->addMarker(new Marker(
+            position: new Point($latitude, $longitude),
+            title: $sortie->getLieu()->getNom(),
+        ));
         return $this->render('sortie/detail-sortie.html.twig', [
             'sortie' => $sortie,
+            'map' => $map,
         ]);
     }
 
