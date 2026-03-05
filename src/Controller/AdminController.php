@@ -7,11 +7,14 @@ use App\DTO\VilleFilterDTO;
 use App\Entity\Site;
 use App\Entity\User;
 use App\Entity\Ville;
+use App\Form\CsvImportType;
 use App\Form\SiteFilterType;
 use App\Form\SiteType;
 use App\Form\VilleFilterType;
 use App\Form\VilleType;
+use App\Helper\SortieManager;
 use App\Helper\UserDefaultManager;
+use App\Helper\UserDeleteManager;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use App\Repository\VilleRepository;
@@ -45,12 +48,15 @@ final class AdminController extends AbstractController
             throw $this->createNotFoundException("La page $page n'existe pas.");
         }
 
+        $form = $this->createForm(CsvImportType::class);
+
 
         return $this->render('admin/gestion-utilisateur.html.twig', [
             'users' => $users,
             'page' => $page,
             'nb_pages_max' => $nbPagesMax,
             'all_users' => $listAll,
+            'form_csv' => $form
         ]);
     }
 
@@ -110,11 +116,9 @@ final class AdminController extends AbstractController
         }
         $token = $request->query->get('_token');
         if ($this->isCsrfTokenValid('actif' . $user->getId(), $token)) {
-
             $user->setActif(true);
             $em->persist($user);
             $em->flush($user);
-
             $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' est actif');
             return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
         }
@@ -158,59 +162,27 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/supprimer/{id}', name: '_supprimer', requirements: ['id' => '\d+'])]
-    public function supprimerUtilisateur(UserRepository $uRepo, int $id, EntityManagerInterface $em, Request $request, UserDefaultManager $userDefaultManager): Response
+    public function supprimerUtilisateur(User                   $user,
+                                         EntityManagerInterface $em,
+                                         Request                $request,
+                                         UserDefaultManager     $userDefaultManager,
+                                         UserDeleteManager      $deleteManager,
+                                         SortieManager          $sortieManager): Response
     {
-        $user = $uRepo->find($id);
-
-        $userDefault = $uRepo->findOneBy(['username' => 'user_default']);
-
-        if(!$userDefault) {
-            $userDefault = $userDefaultManager->createUserDefault();
-            $em->persist($userDefault);
-            $em->flush($userDefault);
-        }
-
-
-        if (!$user) {
-            throw $this->createNotFoundException('Utilisateur non reconnu');
-        }
-
-        $sorties = $user->getSortiesOrganisees();
-
-        // Verifier si une sortie avec l'état Inscrption ouverte ou inscription cloturé existe
-        foreach ($sorties as $sortie) {
-            if ($sortie->getEtat()->getCode() == 'OUV' or $sortie->getEtat()->getCode() == 'CLO' or $sortie->getEtat()->getCode() == 'EC') {
-                $this->addFlash('danger', 'Impossible de supprimer ' . $user->getUsername() . ' (MOTIF : une activité est à l\'état ' . $sortie->getEtat()->getLibelle() . ')');
-                return $this->redirectToRoute('app_admin_gestion');
-            }
-        }
-
-
         $token = $request->query->get('_token');
         if ($this->isCsrfTokenValid('supprimer' . $user->getId(), $token)) {
 
-            // AVANT SUPRESSION
-            // On assigne un utilisateur par défaut pour chaque sortie qu'il a organisé
-            foreach ($sorties as $sortieOrganisee) {
-                $sortieOrganisee->setOrganisateur($userDefault);
-                $em->persist($sortieOrganisee);
-                $em->flush($sortieOrganisee);
+            if ($sortieManager->isSortieEnCours($user)) {
+                $this->addFlash('danger', 'Impossible de supprimer ' . $user->getUsername()
+                    . ' (MOTIF : une sortie est en cours)');
+                return $this->redirectToRoute('app_admin_gestion');
             }
+            $userDefault = $userDefaultManager->findOrCreateUserDefault();
+            $deleteManager->deleteReplaceUser($user, $userDefault);
+            $em->flush();
 
-            $inscriptions = $user->getInscriptions();
-
-            // AVANT SUPRESSION
-            // On assigne un utilisateur par défaut pour chacune de ses inscriptions
-            foreach ($inscriptions as $inscription) {
-                $inscription->setParticipant($userDefault);
-                $em->persist($inscription);
-                $em->flush($inscription);
-            }
-
-            $em->remove($user);
-            $em->flush($user);
-
-            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername() . ' a été remplacé par défault puis supprimer');
+            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername()
+                . ' a été remplacé par l\'utilisateur par défaut puis supprimer');
             return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
         }
 
@@ -279,7 +251,7 @@ final class AdminController extends AbstractController
         $sites = ($formFilter->isSubmitted() && $formFilter->isValid())
             ? $siteRepo->findByFilters($dto)
             //: $siteRepo->findAll();
-        : $siteRepo->findSiteOrderByNom();
+            : $siteRepo->findSiteOrderByNom();
 
         if (!$site) {
             $site = new Site();
