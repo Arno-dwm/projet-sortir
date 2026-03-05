@@ -7,7 +7,6 @@ use App\DTO\VilleFilterDTO;
 use App\Entity\Site;
 use App\Entity\User;
 use App\Entity\Ville;
-use App\Form\CsvImportType;
 use App\Form\SiteFilterType;
 use App\Form\SiteType;
 use App\Form\VilleFilterType;
@@ -47,7 +46,6 @@ final class AdminController extends AbstractController
         if ($page > $nbPagesMax) {
             throw $this->createNotFoundException("La page $page n'existe pas.");
         }
-
         return $this->render('admin/gestion-utilisateur.html.twig', [
             'users' => $users,
             'page' => $page,
