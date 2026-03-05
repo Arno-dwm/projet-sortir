@@ -48,15 +48,11 @@ final class AdminController extends AbstractController
             throw $this->createNotFoundException("La page $page n'existe pas.");
         }
 
-        $form = $this->createForm(CsvImportType::class);
-
-
         return $this->render('admin/gestion-utilisateur.html.twig', [
             'users' => $users,
             'page' => $page,
             'nb_pages_max' => $nbPagesMax,
             'all_users' => $listAll,
-            'form_csv' => $form
         ]);
     }
 
@@ -170,24 +166,22 @@ final class AdminController extends AbstractController
                                          SortieManager          $sortieManager): Response
     {
         $token = $request->query->get('_token');
-        if ($this->isCsrfTokenValid('supprimer' . $user->getId(), $token)) {
-
-            if ($sortieManager->isSortieEnCours($user)) {
-                $this->addFlash('danger', 'Impossible de supprimer ' . $user->getUsername()
-                    . ' (MOTIF : une sortie est en cours)');
-                return $this->redirectToRoute('app_admin_gestion');
-            }
-            $userDefault = $userDefaultManager->findOrCreateUserDefault();
-            $deleteManager->deleteReplaceUser($user, $userDefault);
-            $em->flush();
-
-            $this->addFlash('success', ' L\'utilisateur ' . $user->getUsername()
-                . ' a été remplacé par l\'utilisateur par défaut puis supprimer');
-            return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
+        if (!$this->isCsrfTokenValid('supprimer' . $user->getId(), $token)) {
+            $this->addFlash('danger', "Action impossible");
+            return $this->redirectToRoute('app_home');
         }
+        if ($sortieManager->isSortieEnCours($user)) {
+            $this->addFlash('danger', "Impossible de supprimer {$user->getUsername()}
+                 (MOTIF : une sortie est en cours ou à venir)");
+            return $this->redirectToRoute('app_admin_gestion');
+        }
+        $userDefault = $userDefaultManager->findOrCreateUserDefault();
+        $deleteManager->deleteReplaceUser($user, $userDefault);
+        $em->flush();
 
-        $this->addFlash('danger', "Action impossible");
-        return $this->redirectToRoute('app_home');
+        $this->addFlash('success', "L'utilisateur {$user->getUsername()}
+             a été remplacé par l'utilisateur 'user_default' puis supprimé");
+        return $this->redirectToRoute('app_admin_gestion', ['page' => 1]);
     }
 
 
