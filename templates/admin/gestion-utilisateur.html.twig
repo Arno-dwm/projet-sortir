@@ -13,19 +13,19 @@
                     </div>
 
                     <!--HTML from anywhere-->
-                    <div data-controller="hello" data-hello-hidden-class="d-none mb-2">
+                    <div data-controller="admin" data-admin-hidden-class="d-none mb-2">
                         <div class="d-flex justify-content-end mt-2">
-                            <button data-action="click->hello#showAdmin" class="btn btn-secondary">Afficher les
+                            <button data-action="click->admin#showAdmin" class="btn btn-secondary">Afficher les
                                 admininitrateurs
                             </button>
                         </div>
 
-                        <div data-hello-target="content" class="d-none">
+                        <div data-admin-target="content" class="d-none">
 
-                            <span data-hello-target="output"></span>
+                            <span data-admin-target="output"></span>
                             <h2 class="text-center mb-4">Gestion des Administrateurs</h2>
                             <div class="d-flex justify-content-end mb-2">
-                                <button data-action="click->hello#showUser" class="btn btn-outline-secondary">Cacher
+                                <button data-action="click->admin#showUser" class="btn btn-outline-secondary">Cacher
                                 </button>
                             </div>
                             <div class="table-responsive">
