@@ -23,7 +23,6 @@ class SortieRepository extends ServiceEntityRepository
 
     public function findByFilters(SortieFilterDTO $filters, User $user)
     {
-
         $qb = $this->createQueryBuilder('s')
             ->join('s.organisateur', 'o')
             ->join('s.inscriptions', 'i')
@@ -53,16 +52,15 @@ class SortieRepository extends ServiceEntityRepository
         }
         if ($filters->isOrganisateur) {
             $qb->andWhere('s.organisateur = :user')
-                ->setParameter('user', $user->getId());
+                ->setParameter('user', $user);
         }
         if ($filters->isInscrit) {
             $qb->andWhere('i.participant = :user')
                 ->setParameter('user', $user);
         }
-        if ($filters->isNotInscrit && $user) {
+        if ($filters->isNotInscrit) {
             $qb->leftJoin('s.inscriptions', 'i2', 'WITH', 'i2.participant = :user')
-                ->andWhere('i2.id IS NULL')
-                ->setParameter('user', $user);
+                ->andWhere('i2.id IS NULL');
         }
         if($filters->ended){
             $qb->andWhere('e.code = :etat')
@@ -74,13 +72,10 @@ class SortieRepository extends ServiceEntityRepository
             $qb->andWhere('s.dateHeureDebut >= :dateMin')
                 ->setParameter('dateMin', $filters->dateMin);
         }
-
         if ($filters->dateMax) {
             $qb->andWhere('s.dateHeureDebut <= :dateMax')
                 ->setParameter('dateMax', $filters->dateMax);
         }
-
-
 
        // return $qb->getQuery()->getResult();
         return $qb;

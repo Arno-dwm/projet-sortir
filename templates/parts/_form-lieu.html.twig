@@ -6,16 +6,31 @@
     attr: {
         id: 'category-form',
         'data-turbo-frame': 'modal-frame'
-    }
-}) }}
+        }
+    })
+}}
     {{ form_row(formlieu.nom) }}
     {{ form_row(formlieu.rue) }}
-    {{ form_row(formlieu.latitude) }}
+    {{ form_row(formlieu.latitude, {
+        attr : {
+            id: 'lieu_latitude'
+        }})
+    }}
     {{ form_row(formlieu.longitude) }}
     {{ form_row(formlieu.ville) }}
     <button type="submit" class="btn btn-primary">Enregistrer</button>
     <a id="btnClose" class="btn btn-secondary" data-action="close-modal">Fermer</a>
 {{ form_end(formlieu) }}
 
+    <div>
+        <!-- Conteneur pour la carte -->
+        <div id="map" data-controller="map"
+             data-lat="50"
+             data-lng="50"
+             data-rue=""
+             style="height: 400px; width:100%; margin-top:20px;"></div>
+
+
+    </div>
 
 </turbo-frame>

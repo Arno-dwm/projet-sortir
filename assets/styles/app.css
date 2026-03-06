@@ -31,6 +31,8 @@ form{
 .form-container-child{
     flex: 1 1 auto;
 }
+.form-container-child a{
+}
 .form-container div{
     margin-left:8px;
     min-width: 0;
@@ -39,8 +41,10 @@ form{
 /* Cards sorties*/
 .sorties-list{
     display:flex;
+    justify-content:space-evenly;
     margin-bottom:10px;
     flex-wrap: wrap;
+    gap:5px;
 }
 .card {
     margin-left:10px;
@@ -99,5 +103,6 @@ li>span{
     border-radius:6px;
     background-color: #c9c9c9;
     padding :50px;
+    width : 50vw;
 }
 

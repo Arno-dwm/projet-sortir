@@ -19,23 +19,22 @@ final class LieuController extends AbstractController
         $lieu = new Lieu();
         $form = $this->createForm(LieuType::class, $lieu);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
 
+        //Si soumission du formulaire "nouveau lieu"
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($lieu);
             $entityManager->flush();
 
-            //Pour rafraichir la liste des lieux dans le form création sortie
-            $lieux = $entityManager->getRepository(Lieu::class)->findAll();
             //Utilisation de Turbo Stream pour conserver les infos sur le form création Sortie
             return $this->render('lieu/create.stream.html.twig', [
                 'lieu' => $lieu,
-                'lieux' => $lieux,
             ],new Response('', 200, [
                 'Content-Type' => 'text/vnd.turbo-stream.html'
             ]));
 
         }
 
+        //Appel du formulaire pour affichage dans modal-frame
         return $this->render('parts/_form-lieu.html.twig', [
             'formlieu' => $form,
         ]);
