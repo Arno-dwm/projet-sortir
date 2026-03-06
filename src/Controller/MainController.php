@@ -25,18 +25,15 @@ final class MainController extends AbstractController
 
         $form->handleRequest($request);
 
-
-
-        //Pour pagination
-        $page = max(1, $request->query->getInt('page', 1));
-        $limit = 10;
-
         //$sorties récupère le resultat
         //$qb récupère la requete
         $qb = $form->isSubmitted() && $form->isValid()
             ? $sortieRepository->findByFilters($dto, $user)
             : $sortieRepository->findAllNotCanceledPagin($user);
 
+        //Pour pagination
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 12;
         /*
          * Compter le total SANS limite
          */
@@ -46,7 +43,7 @@ final class MainController extends AbstractController
         $totalPages = max(1, ceil($totalItems / $limit));
 
         /*
-         * Sécuriser la page
+         * Sécuriser la page en cours
          */
         $page = min($page, $totalPages);
 

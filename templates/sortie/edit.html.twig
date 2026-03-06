@@ -95,7 +95,6 @@
                     <dialog id="modal">
                         <turbo-frame id="modal-frame">
                             {# formulaire lieu injecté ici #}
-                            <a id="btnClose" class="btn btn-secondary">xx</a>
                         </turbo-frame>
                     </dialog>
                 </div>
@@ -125,7 +124,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            const lieux = {{ lieux|json_encode|raw }};
+
 
             const select = document.getElementById('{{ sortieForm.lieu.vars.id }}');
             const rueField = document.getElementById('{{ sortieForm.rue.vars.id }}');

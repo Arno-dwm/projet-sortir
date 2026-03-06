@@ -74,12 +74,22 @@
                             <p>{{ sortie.lieu.nom |capitalize }} </p>
                             <p>{{ sortie.lieu.rue |capitalize }} </p>
                             <p>{{ sortie.lieu.ville.getCodePostal }} </p>
-                            <p>{{ sortie.lieu.latitude |capitalize }} </p>
-                            <p>{{ sortie.lieu.longitude |capitalize }} </p>
+                            <p id="lat-display">{{ sortie.lieu.latitude }} </p>
+                            <p id="lng-display">{{ sortie.lieu.longitude }} </p>
                         </div>
                     </div>
                 </div>
-                {{ ux_map(map, { style: 'height: 300px' }) }}
+                <!-- Conteneur pour la carte -->
+                <div id="map" data-controller="map"
+                     data-lat="{{ sortie.lieu.latitude }}"
+                     data-lng="{{ sortie.lieu.longitude }}"
+                     style="height: 400px; margin-top:20px;"></div>
+
+                <!-- Coordonnées cachées (si tu veux les récupérer)
+                <input type="text" id="latitude">
+                <input type="text" id="longitude"> -->
+
+
 
                 {# ------------ Affichage des isncriptions -------------- #}
                 <div class="mt-2">
@@ -181,5 +191,6 @@
         </div>
     </div>
 </div>
+
 
 {% endblock %}

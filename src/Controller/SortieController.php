@@ -155,19 +155,9 @@ final class SortieController extends AbstractController
     #[Route('/detail/{id}', name: '_detail', requirements: ['id' => '\d+'])]
     public function detail(Sortie $sortie): Response
     {
-        $latitude = $sortie->getLieu()->getLatitude();
-        $longitude = $sortie->getLieu()->getLongitude();
-
-        $map = new Map();
-        $map->center(new Point($latitude,$longitude ))
-            ->zoom(11)
-            ->addMarker(new Marker(
-            position: new Point($latitude, $longitude),
-            title: $sortie->getLieu()->getNom(),
-        ));
+        // On transmet juste la sortie au Twig
         return $this->render('sortie/detail-sortie.html.twig', [
             'sortie' => $sortie,
-            'map' => $map,
         ]);
     }
 

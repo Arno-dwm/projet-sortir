@@ -18,7 +18,7 @@ class VilleFilterType extends AbstractType
             //->add('codePostal')
             ->add('inputSearch', TextType::class, [
                 'required' => false,
-                'label' => 'Le nom de la sortie contient :',
+                'label' => 'Le nom de la ville contient :',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Filtrer',
